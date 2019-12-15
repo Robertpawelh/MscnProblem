@@ -1,6 +1,8 @@
+#include "pch.h"
 #include "CMscnProblem.h"
 
-int main()
-{
-	std::cout << "Hello World!\n";
+int main(){
+	CMscnProblem c_problem_object;
+	std::cout << c_problem_object.bRead("sampletest.txt");
+	return 0;
 }

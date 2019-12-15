@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <stdio.h>
 
 using namespace std;
 
@@ -17,30 +18,44 @@ private:
 	double** ppd_cd;
 	double** ppd_cf;
 	double** ppd_cm;
-	double* p_ud;
-	double* p_uf;
-	double* p_um;
-	double* p_p;
-	double** pp_xdminmax;
-	double** pp_xfminmax;
-	double** pp_xmminmax;
+	double* pd_ud;
+	double* pd_uf;
+	double* pd_um;
+	double* pd_p;
+	double** ppd_xdminmax;
+	double** ppd_xfminmax;
+	double** ppd_xmminmax;
+	double** ppd_xd;
+	double** ppd_xf;
+	double** ppd_xm;
 
 public:
 	CMscnProblem();
 	CMscnProblem(string sFilename);
 	~CMscnProblem();
 
-	bool bSetCd();
-	bool bSetCf();
-	bool bSetCm();
-	bool bSetSd();
-	bool bSetSf();
-	bool bSetSm();
-	bool bSetSs();
+	bool bSetD(const int iVal);
+	bool bSetF(const int iVal);
+	bool bSetM(const int iVal);
+	bool bSetS(const int iVal);
 	
-	double dGetQuality(double *pdSolution);
+	bool bSetValInCd(int iRow, int iColumn, double dVal);
+	bool bSetValInCf(int iRow, int iColumn, double dVal);
+	bool bSetValInCm(int iRow, int iColumn, double dVal);
+
+	bool bSetValInSd(int iIndex, double dVal);
+	bool bSetValInSf(int iIndex, double dVal);
+	bool bSetValInSm(int iIndex, double dVal);
+	bool bSetValInSs(int iIndex, double dVal);
+	
+	double dCalculateTransportCost(); // it is this big sum
+	double dCalculateContractCost();
+	double dCalculateIncome();
+	double dCalculateProfit();
+
+	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution);
-	void vSave();
-	void vRead(string sFileName);
+	bool bSave();
+	bool bRead(string sFileName);
 };
 
