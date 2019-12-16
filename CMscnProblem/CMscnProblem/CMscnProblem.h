@@ -15,20 +15,25 @@ private:
 	double* pd_sf;
 	double* pd_sm;
 	double* pd_ss;
+
 	double** ppd_cd;
 	double** ppd_cf;
 	double** ppd_cm;
+
 	double* pd_ud;
 	double* pd_uf;
 	double* pd_um;
 	double* pd_p;
+
 	double** ppd_xdminmax;
 	double** ppd_xfminmax;
 	double** ppd_xmminmax;
+
 	double** ppd_xd;
 	double** ppd_xf;
 	double** ppd_xm;
 
+	void vCopyTab(double *pd_destination, double *pd_source, int i_size);
 public:
 	CMscnProblem();
 	CMscnProblem(string sFilename);
@@ -47,7 +52,19 @@ public:
 	bool bSetValInSf(int iIndex, double dVal);
 	bool bSetValInSm(int iIndex, double dVal);
 	bool bSetValInSs(int iIndex, double dVal);
+
+	bool bSetValInUd(int iIndex, double dVal);
+	bool bSetValInUf(int iIndex, double dVal);
+	bool bSetValInUm(int iIndex, double dVal);
 	
+	bool bSetValInP(int iIndex, double dVal);
+
+	bool bSetValInXdminmax(int iRow, int iColumn, double dVal);
+	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
+	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
+
+	double dGetMin(double* pdSolution, int iId);
+	double dGetMax(double* pdSolution, int iId);
 	double dCalculateTransportCost(); // it is this big sum
 	double dCalculateContractCost();
 	double dCalculateIncome();
@@ -55,7 +72,6 @@ public:
 
 	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution);
-	bool bSave();
 	bool bRead(string sFileName);
 };
 
