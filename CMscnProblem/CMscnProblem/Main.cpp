@@ -19,7 +19,7 @@ int main() {
 	cout << endl << "WHY SO BAD? IS IT A CORRECT SOLUTION? " << c_problem_object.bConstraintsSatisfied(d_sample_solution) << endl;
 	cout << endl << "MIN AT 11 INDEX: " << c_problem_object.dGetMin(d_sample_solution, 11) << endl;
 	cout << endl << "MAX AT 11 INDEX: " << c_problem_object.dGetMax(d_sample_solution, 11) << endl;
-
+	c_problem_object.bSave("plik.txt");
 	return 0;
 
 }

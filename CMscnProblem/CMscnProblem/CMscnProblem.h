@@ -63,13 +63,14 @@ public:
 
 	double dGetMin(double* pdSolution, int iId);
 	double dGetMax(double* pdSolution, int iId);
-	double dCalculateTransportCost(); // it is this big sum
+	double dCalculateTransportCost(); 
 	double dCalculateContractCost();
 	double dCalculateIncome();
 	double dCalculateProfit();
 
 	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution);
+	bool bSave(string sFileName);
 	bool bRead(string sFileName);
 };
 

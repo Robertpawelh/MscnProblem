@@ -571,34 +571,34 @@ bool CMscnProblem::bSetValInXmminmax(int iRow, int iColumn, double dVal) {
 }
 
 double CMscnProblem::dGetMin(double * pdSolution, int iId) {
-	if (iId >= i_D*i_F) {
+	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
 	}
 	else {
-		return ppd_xdminmax[2* (iId / i_F)][iId%i_F];
+		return ppd_xdminmax[2 * (iId / i_F)][iId%i_F];
 	}
 
 	if (iId >= i_F * i_M) {
 		iId -= i_F * i_M;
 	}
 	else {
-	
-		return ppd_xfminmax[2* (iId / i_M)][iId%i_M];
+
+		return ppd_xfminmax[2 * (iId / i_M)][iId%i_M];
 	}
 
 	if (iId >= i_M * i_S) {
 		iId -= i_M * i_S;
 	}
 	else {
-		return ppd_xmminmax[2*(iId / i_S)][iId%i_S];
+		return ppd_xmminmax[2 * (iId / i_S)][iId%i_S];
 	}
-	
+
 	return -1; //tu powinna byc referencja bledu zmieniona na false;
 }
 
-double CMscnProblem::dGetMax(double * pdSolution, int iId){
+double CMscnProblem::dGetMax(double * pdSolution, int iId) {
 
-	if (iId >= i_D*i_F) {
+	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
 	}
 	else {
@@ -833,17 +833,48 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 	return true;
 }
 
-/*
-int CMscnProblem::bReadNumber(char cName, FILE* pf_file, bool &isSuccess) {
-	if (fgetc(pf_file) == cName) {
-		isSuccess
-		return fgetc(pf_file);
-	}
-	else {
+
+bool CMscnProblem::bSave(string sFileName) {
+	FILE* pf_file = fopen(sFileName.c_str(), "w+");
+	if (pf_file == NULL) {
 		return false;
 	}
+	fprintf(pf_file, "%s", "D ");
+	fprintf(pf_file, "%i", i_D);
+	fprintf(pf_file, "%s", "\nF ");
+	fprintf(pf_file, "%i", i_F);
+	fprintf(pf_file, "%s", "\nM ");
+	fprintf(pf_file, "%i", i_M);
+	fprintf(pf_file, "%s", "\nS ");
+	fprintf(pf_file, "%i", i_S);
+
+	fprintf(pf_file, "%s", "\nxd\n");
+	for (int i = 0; i < i_D; i++) {
+		for (int j = 0; j < i_F; j++) {
+			fprintf(pf_file, "%", ppd_xd[i][j]);
+			fprintf(pf_file, "%s", " ");
+		}
+	}
+
+	fprintf(pf_file, "%s", "\nxf\n");
+	for (int i = 0; i < i_F; i++) {
+		for (int j = 0; j < i_M; j++) {
+			fprintf(pf_file, "%lf", ppd_xf[i][j]);
+			fprintf(pf_file, "%s", " ");
+		}
+	}
+
+	fprintf(pf_file, "%s", "\nxm\n");
+	for (int i = 0; i < i_M; i++) {
+		for (int j = 0; j < i_S; j++) {
+			fprintf(pf_file, "%lf", ppd_xm[i][j]);
+			fprintf(pf_file, "%s", " ");
+		}
+	}
+	fclose(pf_file);
+	return true;
 };
-*/
+
 
 bool CMscnProblem::bRead(string sFileName) {
 	FILE* pf_file = fopen(sFileName.c_str(), "r");
@@ -951,38 +982,38 @@ bool CMscnProblem::bRead(string sFileName) {
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_D; i+=2) {
+	for (int i = 0; i < 2 * i_D; i += 2) {
 		for (int j = 0; j < i_F; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXdminmax(i, j, d_num);
 			cout << "xdminmax[" << i << ", " << j << "]: " << ppd_xdminmax[i][j] << "\n";
 			fscanf(pf_file, "%lf", &d_num);
-			bSetValInXdminmax(i+1, j, d_num);
-			cout << "xdminmax[" << i+1 << ", " << j << "]: " << ppd_xdminmax[i+1][j] << "\n";
+			bSetValInXdminmax(i + 1, j, d_num);
+			cout << "xdminmax[" << i + 1 << ", " << j << "]: " << ppd_xdminmax[i + 1][j] << "\n";
 		}
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_F; i+=2) {
+	for (int i = 0; i < 2 * i_F; i += 2) {
 		for (int j = 0; j < i_M; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXfminmax(i, j, d_num);
 			cout << "xfminmax[" << i << ", " << j << "]: " << ppd_xfminmax[i][j] << "\n";
 			fscanf(pf_file, "%lf", &d_num);
-			bSetValInXfminmax(i+1, j, d_num);
-			cout << "xfminmax[" << i+1 << ", " << j << "]: " << ppd_xfminmax[i+1][j] << "\n";
+			bSetValInXfminmax(i + 1, j, d_num);
+			cout << "xfminmax[" << i + 1 << ", " << j << "]: " << ppd_xfminmax[i + 1][j] << "\n";
 		}
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_M; i+=2) {
+	for (int i = 0; i < 2 * i_M; i += 2) {
 		for (int j = 0; j < i_S; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXmminmax(i, j, d_num);
 			cout << "xmminmax[" << i << ", " << j << "]: " << ppd_xmminmax[i][j] << "\n";
 			fscanf(pf_file, "%lf", &d_num);
-			bSetValInXmminmax(i+1, j, d_num);
-			cout << "xmminmax[" << i+1 << ", " << j << "]: " << ppd_xmminmax[i+1][j] << "\n";
+			bSetValInXmminmax(i + 1, j, d_num);
+			cout << "xmminmax[" << i + 1 << ", " << j << "]: " << ppd_xmminmax[i + 1][j] << "\n";
 		}
 	}
 
