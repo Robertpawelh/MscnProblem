@@ -570,6 +570,58 @@ bool CMscnProblem::bSetValInXmminmax(int iRow, int iColumn, double dVal) {
 	return true;
 }
 
+double CMscnProblem::dGetMin(double * pdSolution, int iId) {
+	if (iId >= i_D*i_F) {
+		iId -= i_D * i_F;
+	}
+	else {
+		return ppd_xdminmax[2* (iId / i_F)][iId%i_F];
+	}
+
+	if (iId >= i_F * i_M) {
+		iId -= i_F * i_M;
+	}
+	else {
+	
+		return ppd_xfminmax[2* (iId / i_M)][iId%i_M];
+	}
+
+	if (iId >= i_M * i_S) {
+		iId -= i_M * i_S;
+	}
+	else {
+		return ppd_xmminmax[2*(iId / i_S)][iId%i_S];
+	}
+	
+	return -1; //tu powinna byc referencja bledu zmieniona na false;
+}
+
+double CMscnProblem::dGetMax(double * pdSolution, int iId){
+
+	if (iId >= i_D*i_F) {
+		iId -= i_D * i_F;
+	}
+	else {
+		return ppd_xdminmax[1 + 2 * (iId / i_F)][iId%i_F];
+	}
+
+	if (iId >= i_F * i_M) {
+		iId -= i_F * i_M;
+	}
+	else {
+		return ppd_xfminmax[1 + 2 * (iId / i_M)][iId%i_M];
+	}
+
+	if (iId >= i_M * i_S) {
+		iId -= i_M * i_S;
+	}
+	else {
+		return ppd_xmminmax[1 + 2 * (iId / i_S)][iId%i_S];
+	}
+
+	return -1;
+}
+
 
 double CMscnProblem::dCalculateTransportCost() {
 	double d_sum = 0;
@@ -712,6 +764,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 		for (int j = 0; j < i_F; j++) {
 			if (pdSolution[count] >= 0) {
 				d_sum_xd += pdSolution[count];
+				count++;
 			}
 			else {
 				return false;
@@ -723,6 +776,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 		for (int j = 0; j < i_M; j++) {
 			if (pdSolution[count] >= 0) {
 				d_sum_xf += pdSolution[count];
+				count++;
 			}
 			else {
 				return false;
@@ -734,6 +788,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 		for (int j = 0; j < i_S; j++) {
 			if (pdSolution[count] >= 0) {
 				d_sum_xm += pdSolution[count];
+				count++;
 			}
 			else {
 				return false;
@@ -746,11 +801,12 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 	}
 
 	count = 4;
-	for (int i = 0; i < 2*i_D; i=+2) {
+	for (int i = 0; i < 2 * i_D; i = +2) {
 		for (int j = 0; j < i_F; j++) {
 			if (pdSolution[count] < ppd_xdminmax[i][j] || pdSolution[count] > ppd_xdminmax[i + 1][j]) {
 				return false;
 			}
+			count++;
 		}
 	}
 
@@ -759,6 +815,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 			if (pdSolution[count] < ppd_xfminmax[i][j] || pdSolution[count] > ppd_xfminmax[i + 1][j]) {
 				return false;
 			}
+			count++;
 		}
 	}
 	for (int i = 0; i < 2 * i_M; i = +2) {
@@ -766,9 +823,10 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 			if (pdSolution[count] < ppd_xmminmax[i][j] || pdSolution[count] > ppd_xmminmax[i + 1][j]) {
 				cout << pdSolution[count] << endl;
 				cout << ppd_xmminmax[i][j] << endl;
-				cout << ppd_xmminmax[i+1][j] << endl;
+				cout << ppd_xmminmax[i + 1][j] << endl;
 				return false;
 			}
+			count++;
 		}
 	}
 
@@ -893,29 +951,38 @@ bool CMscnProblem::bRead(string sFileName) {
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_D; i++) {
+	for (int i = 0; i < 2 * i_D; i+=2) {
 		for (int j = 0; j < i_F; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXdminmax(i, j, d_num);
 			cout << "xdminmax[" << i << ", " << j << "]: " << ppd_xdminmax[i][j] << "\n";
+			fscanf(pf_file, "%lf", &d_num);
+			bSetValInXdminmax(i+1, j, d_num);
+			cout << "xdminmax[" << i+1 << ", " << j << "]: " << ppd_xdminmax[i+1][j] << "\n";
 		}
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_F; i++) {
+	for (int i = 0; i < 2 * i_F; i+=2) {
 		for (int j = 0; j < i_M; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXfminmax(i, j, d_num);
 			cout << "xfminmax[" << i << ", " << j << "]: " << ppd_xfminmax[i][j] << "\n";
+			fscanf(pf_file, "%lf", &d_num);
+			bSetValInXfminmax(i+1, j, d_num);
+			cout << "xfminmax[" << i+1 << ", " << j << "]: " << ppd_xfminmax[i+1][j] << "\n";
 		}
 	}
 
 	fscanf(pf_file, "%ls", c_val);
-	for (int i = 0; i < 2 * i_F; i++) {
-		for (int j = 0; j < i_M; j++) {
+	for (int i = 0; i < 2 * i_M; i+=2) {
+		for (int j = 0; j < i_S; j++) {
 			fscanf(pf_file, "%lf", &d_num);
 			bSetValInXmminmax(i, j, d_num);
 			cout << "xmminmax[" << i << ", " << j << "]: " << ppd_xmminmax[i][j] << "\n";
+			fscanf(pf_file, "%lf", &d_num);
+			bSetValInXmminmax(i+1, j, d_num);
+			cout << "xmminmax[" << i+1 << ", " << j << "]: " << ppd_xmminmax[i+1][j] << "\n";
 		}
 	}
 

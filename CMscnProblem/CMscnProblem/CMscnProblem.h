@@ -33,10 +33,8 @@ private:
 	double** ppd_xf;
 	double** ppd_xm;
 
-	void vCopyTab(double *pd_destination, double *pd_source, int i_size);
 public:
 	CMscnProblem();
-	CMscnProblem(string sFilename);
 	~CMscnProblem();
 
 	bool bSetD(const int iVal);
