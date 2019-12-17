@@ -2,7 +2,7 @@
 #include "CMscnProblem.h"
 
 int main() {
-	CMscnProblem c_problem_object;
+	CMscnProblem c_problem_object;/**
 	cout << c_problem_object.bRead("test_2.txt");
 	double * d_sample_solution;
 	d_sample_solution = new double[18];
@@ -20,6 +20,16 @@ int main() {
 	cout << endl << "MIN AT 11 INDEX: " << c_problem_object.dGetMin(d_sample_solution, 11) << endl;
 	cout << endl << "MAX AT 11 INDEX: " << c_problem_object.dGetMax(d_sample_solution, 11) << endl;
 	c_problem_object.bSave("plik.txt");
+	*/
+	cout << c_problem_object.bRead("sampletest.txt");
+	bool isSuccess;
+
+	double * d_sample_solution;
+	d_sample_solution = new double[7];
+	for (int i = 0; i < 7; i++) {
+		d_sample_solution[i] = 1;
+	}
+	cout << "\nPROFIT: " << c_problem_object.dGetQuality(d_sample_solution, isSuccess) << endl;
 	return 0;
 
 }

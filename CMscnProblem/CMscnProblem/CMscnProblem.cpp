@@ -31,15 +31,15 @@ CMscnProblem::CMscnProblem() {
 
 	pd_p = new double[i_S];
 
-	ppd_xdminmax = new double*[2 * i_D]; //SPRAWDZ
+	ppd_xdminmax = new double*[2 * i_D]; 
 	for (int i = 0; i < 2 * i_D; i++) {
 		ppd_xdminmax[i] = new double[i_F];
 	}
-	ppd_xfminmax = new double*[2 * i_F]; //SPRAWDZ
+	ppd_xfminmax = new double*[2 * i_F]; 
 	for (int i = 0; i < 2 * i_F; i++) {
 		ppd_xfminmax[i] = new double[i_M];
 	}
-	ppd_xmminmax = new double*[2 * i_M]; //SPRAWDZ
+	ppd_xmminmax = new double*[2 * i_M];
 	for (int i = 0; i < 2 * i_M; i++) {
 		ppd_xmminmax[i] = new double[i_S];
 	}
@@ -115,13 +115,7 @@ CMscnProblem::~CMscnProblem() {
 	}
 	delete[] ppd_xm;
 }
-/*
-void CMscnProblem::vCopyTab(double *pd_destination, double *pd_source, int i_size) {
-	for (int i = 0; i < i_size; i++) {
-		pd_destination[i] = pd_source[i];
-	}
-}
-*/
+
 bool CMscnProblem::bSetD(const int iVal) {
 	if (iVal < 0 || iVal == i_D) {
 		return false;
@@ -651,26 +645,38 @@ double CMscnProblem::dCalculateContractCost() {
 
 	for (int i = 0; i < i_D; i++) {
 		double d_count_of_element = 0;
-		for (int j = 0; j < i_F; j++) {
+		int j = 0;
+		while (j<i_F && d_count_of_element ==0){
 			d_count_of_element += ppd_xd[i][j];
+			j++;
 		}
-		d_sum += pd_ud[i] * d_count_of_element;
+		if (d_count_of_element > 0) {
+			d_sum += pd_ud[i];
+		}
 	}
 
 	for (int i = 0; i < i_F; i++) {
 		double d_count_of_element = 0;
-		for (int j = 0; j < i_M; j++) {
+		int j = 0;
+		while (j < i_M && d_count_of_element == 0) {
 			d_count_of_element += ppd_xf[i][j];
+			j++;
 		}
-		d_sum += pd_uf[i] * d_count_of_element;
+		if (d_count_of_element > 0) {
+			d_sum += pd_uf[i];
+		}
 	}
 
 	for (int i = 0; i < i_M; i++) {
 		double d_count_of_element = 0;
-		for (int j = 0; j < i_S; j++) {
+		int j = 0;
+		while (j < i_S && d_count_of_element == 0) {
 			d_count_of_element += ppd_xm[i][j];
+			j++;
 		}
-		d_sum += pd_um[i] * d_count_of_element;
+		if (d_count_of_element > 0) {
+			d_sum += pd_um[i];
+		}
 	}
 
 	return d_sum;
@@ -851,7 +857,7 @@ bool CMscnProblem::bSave(string sFileName) {
 	fprintf(pf_file, "%s", "\nxd\n");
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
-			fprintf(pf_file, "%", ppd_xd[i][j]);
+			fprintf(pf_file, "%lf", ppd_xd[i][j]);
 			fprintf(pf_file, "%s", " ");
 		}
 	}
@@ -882,136 +888,118 @@ bool CMscnProblem::bRead(string sFileName) {
 		return false;
 	}
 
-	char c_val[25]; //stala
+	char c_val[16]; //stala
 	int i_num;
 	double d_num;
-	fscanf(pf_file, "%s", c_val);
-	fscanf(pf_file, "%i", &i_num);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
 	bSetD(i_num);
-	fscanf(pf_file, "%s", c_val);
-	fscanf(pf_file, "%i", &i_num);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
 	bSetF(i_num);
-	fscanf(pf_file, "%s", c_val);
-	fscanf(pf_file, "%i", &i_num);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
 	bSetM(i_num);
-	fscanf(pf_file, "%s", c_val);
-	fscanf(pf_file, "%i", &i_num);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
 	bSetS(i_num);
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSd(i, d_num);
 		cout << "sd[" << i << +"]: " << pd_sd[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_F; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSf(i, d_num);
 		cout << "sf[" << i << +"]: " << pd_sf[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_M; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSm(i, d_num);
 		cout << "sm[" << i << +"]: " << pd_sm[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_S; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSs(i, d_num);
 		cout << "ss[" << i << +"]: " << pd_ss[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCd(i, j, d_num);
 			cout << "cd[" << i << "][" << j << "]: " << ppd_cd[i][j] << "\n";
 		}
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCf(i, j, d_num);
 			cout << "cf[" << i << "][" << j << "]: " << ppd_cf[i][j] << "\n";
 		}
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCm(i, j, d_num);
 			cout << "cm[" << i << "][" << j << "]: " << ppd_cm[i][j] << "\n";
 		}
 	}
 
-	fscanf(pf_file, "%s", c_val);;
 	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUd(i, d_num);
 		cout << "ud[" << i << "]: " << pd_ud[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);;
 	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUf(i, d_num);
 		cout << "uf[" << i << "]: " << pd_uf[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);;
 	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUm(i, d_num);
 		cout << "um[" << i << "]: " << pd_um[i] << "\n";
 	}
 
-	fscanf(pf_file, "%s", c_val);
 	for (int i = 0; i < i_S; i++) {
-		fscanf(pf_file, "%lf", &d_num);
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInP(i, d_num);
 		cout << "p[" << i << "]: " << pd_p[i] << "\n";
 	}
 
-	fscanf(pf_file, "%ls", c_val);
 	for (int i = 0; i < 2 * i_D; i += 2) {
 		for (int j = 0; j < i_F; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXdminmax(i, j, d_num);
 			cout << "xdminmax[" << i << ", " << j << "]: " << ppd_xdminmax[i][j] << "\n";
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXdminmax(i + 1, j, d_num);
 			cout << "xdminmax[" << i + 1 << ", " << j << "]: " << ppd_xdminmax[i + 1][j] << "\n";
 		}
 	}
 
-	fscanf(pf_file, "%ls", c_val);
 	for (int i = 0; i < 2 * i_F; i += 2) {
 		for (int j = 0; j < i_M; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXfminmax(i, j, d_num);
 			cout << "xfminmax[" << i << ", " << j << "]: " << ppd_xfminmax[i][j] << "\n";
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXfminmax(i + 1, j, d_num);
 			cout << "xfminmax[" << i + 1 << ", " << j << "]: " << ppd_xfminmax[i + 1][j] << "\n";
 		}
 	}
 
-	fscanf(pf_file, "%ls", c_val);
 	for (int i = 0; i < 2 * i_M; i += 2) {
 		for (int j = 0; j < i_S; j++) {
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXmminmax(i, j, d_num);
 			cout << "xmminmax[" << i << ", " << j << "]: " << ppd_xmminmax[i][j] << "\n";
-			fscanf(pf_file, "%lf", &d_num);
+			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXmminmax(i + 1, j, d_num);
 			cout << "xmminmax[" << i + 1 << ", " << j << "]: " << ppd_xmminmax[i + 1][j] << "\n";
 		}
