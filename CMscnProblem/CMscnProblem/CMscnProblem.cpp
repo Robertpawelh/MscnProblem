@@ -43,20 +43,6 @@ CMscnProblem::CMscnProblem() {
 	for (int i = 0; i < 2 * i_M; i++) {
 		ppd_xmminmax[i] = new double[i_S];
 	}
-	/*
-	ppd_xd = new double*[i_D];
-	for (int i = 0; i < i_D; i++) {
-		ppd_xd[i] = new double[i_F];
-	}
-	ppd_xf = new double*[i_F];
-	for (int i = 0; i < i_F; i++) {
-		ppd_xf[i] = new double[i_M];
-	}
-	ppd_xm = new double*[i_M];
-	for (int i = 0; i < i_M; i++) {
-		ppd_xm[i] = new double[i_S];
-	}
-	*/
 }
 
 CMscnProblem::~CMscnProblem() {
@@ -100,22 +86,6 @@ CMscnProblem::~CMscnProblem() {
 		delete[] ppd_xmminmax[i];
 	}
 	delete[] ppd_xmminmax;
-	/*
-	for (int i = 0; i < i_D; i++) {
-		delete[] ppd_xd[i];
-	}
-	delete[] ppd_xd;
-
-	for (int i = 0; i < i_F; i++) {
-		delete[] ppd_xf[i];
-	}
-	delete[] ppd_xf;
-
-	for (int i = 0; i < i_M; i++) {
-		delete[] ppd_xm[i];
-	}
-	delete[] ppd_xm;
-	*/
 }
 
 bool CMscnProblem::bSetD(const int iVal) {
@@ -134,7 +104,6 @@ bool CMscnProblem::bSetD(const int iVal) {
 		pd_new_sd[i] = pd_sd[i];
 		pd_new_ud[i] = pd_ud[i];
 		ppd_new_cd[i] = ppd_cd[i];
-	//	ppd_new_xd[i] = ppd_xd[i];
 		ppd_new_xdminmax[i] = ppd_xdminmax[i];
 	}
 
@@ -146,7 +115,6 @@ bool CMscnProblem::bSetD(const int iVal) {
 	if (i_D < iVal) {
 		for (int i = i_D; i < iVal; i++) {
 			ppd_new_cd[i] = new double[i_F];
-		//	ppd_new_xd[i] = new double[i_F];
 		}
 		for (int i = 2 * i_D; i < 2 * iVal; i++) {
 			ppd_new_xdminmax[i] = new double[i_F];
@@ -155,17 +123,14 @@ bool CMscnProblem::bSetD(const int iVal) {
 
 	for (int i = iVal; i < i_D; i++) {
 		delete[] ppd_cd[i];
-	//	delete[] ppd_xd[i];
 	}
 
 	delete[] pd_sd;
 	delete[] pd_ud;
 	delete[] ppd_cd;
-//	delete[] ppd_xd;
 	pd_sd = pd_new_sd;
 	pd_ud = pd_new_ud;
 	ppd_cd = ppd_new_cd;
-//	ppd_xd = ppd_new_xd;
 
 	for (int i = 2 * iVal; i < 2 * i_D; i++) {
 		delete[] ppd_xdminmax[i];
@@ -186,7 +151,6 @@ bool CMscnProblem::bSetF(const int iVal) {
 	double* pd_new_uf = new double[iVal];
 	double** ppd_new_cf = new double*[iVal];
 	double** ppd_new_cd = new double*[i_D];
-//	double** ppd_new_xf = new double*[iVal];
 	double** ppd_new_xd = new double*[i_D];
 	double** ppd_new_xdminmax = new double*[2 * i_D];
 	double** ppd_new_xfminmax = new double*[2 * iVal];
@@ -204,7 +168,6 @@ bool CMscnProblem::bSetF(const int iVal) {
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_loop_len; j++) {
 			ppd_new_cd[i][j] = ppd_cd[i][j];
-	//		ppd_new_xd[i][j] = ppd_xd[i][j];
 			ppd_new_xdminmax[i][j] = ppd_xdminmax[i][j];
 		}
 	}
@@ -220,7 +183,6 @@ bool CMscnProblem::bSetF(const int iVal) {
 		pd_new_sf[i] = pd_sf[i];
 		pd_new_uf[i] = pd_uf[i];
 		ppd_new_cf[i] = ppd_cf[i];
-	//	ppd_new_xf[i] = ppd_xf[i];
 		ppd_new_xfminmax[i] = ppd_xfminmax[i];
 	}
 
@@ -232,7 +194,6 @@ bool CMscnProblem::bSetF(const int iVal) {
 
 		for (int i = i_F; i < iVal; i++) {
 			ppd_new_cf[i] = new double[i_M];
-		//	ppd_new_xf[i] = new double[i_M];
 		}
 		for (int i = 2 * i_F; i < 2 * iVal; i++) {
 			ppd_new_xfminmax[i] = new double[i_M];
@@ -242,27 +203,21 @@ bool CMscnProblem::bSetF(const int iVal) {
 	for (int i = 0; i < i_D; i++) {
 		for (int j = iVal; j < i_F; j++) {
 			delete ppd_cd[i];
-		//	delete ppd_xd[i];
 		}
 	}
 
 	for (int i = iVal; i < i_F; i++) { //upewnij sie, czy nie trzeba usuwac od 0 
 		delete[] ppd_cf[i];
-	//	delete[] ppd_xf[i];
 	}
 
 	delete[] pd_sf;
 	delete[] pd_uf;
 	delete[] ppd_cf;
-	//delete[] ppd_xf;
 	delete[] ppd_cd;
-	//delete[] ppd_xd;
 	pd_sf = pd_new_sf;
 	pd_uf = pd_new_uf;
 	ppd_cd = ppd_new_cd;
-//	ppd_xd = ppd_new_xd;
 	ppd_cf = ppd_new_cf;
-//	ppd_xf = ppd_new_xf;
 
 	for (int i = 0; i < 2 * i_D; i++) {
 		for (int j = iVal; j < i_F; j++) {
@@ -292,14 +247,11 @@ bool CMscnProblem::bSetM(const int iVal) {
 	double* pd_new_um = new double[iVal];
 	double** ppd_new_cm = new double*[iVal];
 	double** ppd_new_cf = new double*[i_F];
-	//double** ppd_new_xm = new double*[iVal];
-	//double** ppd_new_xf = new double*[i_F];
 	double** ppd_new_xfminmax = new double*[2 * i_F];
 	double** ppd_new_xmminmax = new double*[2 * iVal];
 
 	for (int i = 0; i < i_F; i++) {
 		ppd_new_cf[i] = new double[iVal];
-	//	ppd_new_xf[i] = new double[iVal];
 	}
 	for (int i = 0; i < 2 * i_F; i++) {
 		ppd_new_xfminmax[i] = new double[iVal];
@@ -310,7 +262,6 @@ bool CMscnProblem::bSetM(const int iVal) {
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_loop_len; j++) {
 			ppd_new_cf[i][j] = ppd_cf[i][j];
-		//	ppd_new_xf[i][j] = ppd_xf[i][j];
 			ppd_new_xfminmax[i][j] = ppd_xfminmax[i][j];
 		}
 	}
@@ -326,7 +277,6 @@ bool CMscnProblem::bSetM(const int iVal) {
 		pd_new_sm[i] = pd_sm[i];
 		pd_new_um[i] = pd_um[i];
 		ppd_new_cm[i] = ppd_cm[i];
-		//ppd_new_xm[i] = ppd_xm[i];
 		ppd_new_xmminmax[i] = ppd_xmminmax[i];
 	}
 
@@ -338,7 +288,6 @@ bool CMscnProblem::bSetM(const int iVal) {
 
 		for (int i = i_M; i < iVal; i++) {
 			ppd_new_cm[i] = new double[i_S];
-		//	ppd_new_xm[i] = new double[i_S];
 		}
 		for (int i = 2 * i_M; i < 2 * iVal; i++) {
 			ppd_new_xmminmax[i] = new double[i_S];
@@ -348,27 +297,21 @@ bool CMscnProblem::bSetM(const int iVal) {
 	for (int i = 0; i < i_F; i++) {
 		for (int j = iVal; j < i_M; j++) {
 			delete ppd_cf[i];
-		//	delete ppd_xf[i];
 		}
 	}
 
 	for (int i = iVal; i < i_M; i++) {
 		delete[] ppd_cm[i];
-		//delete[] ppd_xm[i];
 	}
 
 	delete[] pd_sm;
 	delete[] pd_um;
 	delete[] ppd_cm;
-	//delete[] ppd_xm;
 	delete[] ppd_cf;
-//	delete[] ppd_xf;
 	pd_sm = pd_new_sm;
 	pd_um = pd_new_um;
 	ppd_cf = ppd_new_cf;
-	//ppd_xf = ppd_new_xf;
 	ppd_cm = ppd_new_cm;
-	//ppd_xm = ppd_new_xm;
 
 	for (int i = 0; i < 2 * i_F; i++) {
 		for (int j = iVal; j < i_M; j++) {
@@ -397,13 +340,11 @@ bool CMscnProblem::bSetS(const int iVal) {
 
 	double* pd_new_ss = new double[iVal];
 	double** ppd_new_cm = new double*[i_M];
-	//double** ppd_new_xm = new double*[i_M];
 	double** ppd_new_xmminmax = new double*[2 * i_M];
 	double *pd_new_p = new double[iVal];
 
 	for (int i = 0; i < i_M; i++) {
 		ppd_new_cm[i] = new double[iVal];
-	//	ppd_new_xm[i] = new double[iVal];
 	}
 	for (int i = 0; i < 2 * i_M; i++) {
 		ppd_new_xmminmax[i] = new double[iVal];
@@ -414,7 +355,6 @@ bool CMscnProblem::bSetS(const int iVal) {
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_loop_len; j++) {
 			ppd_new_cm[i][j] = ppd_cm[i][j];
-	//		ppd_new_xm[i][j] = ppd_xm[i][j];
 			ppd_new_xmminmax[i][j] = ppd_xmminmax[i][j];
 		}
 	}
@@ -434,18 +374,15 @@ bool CMscnProblem::bSetS(const int iVal) {
 	for (int i = 0; i < i_M; i++) {
 		for (int j = iVal; j < i_S; j++) {
 			delete ppd_cm[i];
-		//	delete ppd_xm[i];
 		}
 	}
 
 	delete[] pd_ss;
 	delete[] pd_p;
 	delete[] ppd_cm;
-	//delete[] ppd_xm;
 	pd_ss = pd_new_ss;
 	pd_p = pd_new_p;
 	ppd_cm = ppd_new_cm;
-	//ppd_xm = ppd_new_xm;
 
 	for (int i = 0; i < 2 * i_M; i++) {
 		for (int j = iVal; j < i_S; j++) {
@@ -690,7 +627,7 @@ double CMscnProblem::dCalculateIncome(double * pdSolution) {
 	double d_sum = 0;
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			d_sum += pd_p[i] * pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M];// //  pdSolution[count++];ppd_xm[i][j];
+			d_sum += pd_p[i] * pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M];
 		}
 	}
 	return d_sum;
@@ -708,50 +645,7 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 	}
 
 	int count = 0;
-/*	i_D = pdSolution[count++];
-	i_F = pdSolution[count++];
-	i_M = pdSolution[count++];
-	i_S = pdSolution[count++];
-	for (int i = 0; i < i_D; i++) {
-		for (int j = 0; j < i_F; j++) {
-			if (pdSolution[count] >= 0) {
-				ppd_xd[i][j] = pdSolution[count];
-				count++;
-			}
-			else {
-				bIsSuccess = false;
-				i = i_D; j = i_F;
-			}
-		}
-	}
 
-	for (int i = 0; i < i_F; i++) {
-		for (int j = 0; j < i_M; j++) {
-			if (pdSolution[count] >= 0) {
-				ppd_xf[i][j] = pdSolution[count];
-				count++;
-			}
-			else {
-				bIsSuccess = false;
-				i = i_F; j = i_M;
-			}
-		}
-	}
-
-	for (int i = 0; i < i_M; i++) {
-		for (int j = 0; j < i_S; j++) {
-			if (pdSolution[count] >= 0) {
-				ppd_xm[i][j] = pdSolution[count];
-				count++;
-			}
-			else {
-				bIsSuccess = false;
-				i = i_M; j = i_S;
-			}
-		}
-	}
-
-	*/
 	return dCalculateProfit(pdSolution);
 }
 
