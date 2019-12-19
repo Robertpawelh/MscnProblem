@@ -3,6 +3,7 @@
 #include <string>
 #include <stdio.h>
 
+#define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
 using namespace std;
 
 class CMscnProblem{
@@ -29,9 +30,9 @@ private:
 	double** ppd_xfminmax;
 	double** ppd_xmminmax;
 
-	double** ppd_xd;
-	double** ppd_xf;
-	double** ppd_xm;
+//	double** ppd_xd;
+//	double** ppd_xf;
+//	double** ppd_xm;
 
 public:
 	CMscnProblem();
@@ -63,14 +64,16 @@ public:
 
 	double dGetMin(double* pdSolution, int iId);
 	double dGetMax(double* pdSolution, int iId);
-	double dCalculateTransportCost(); 
-	double dCalculateContractCost();
-	double dCalculateIncome();
-	double dCalculateProfit();
+	double dCalculateTransportCost(double * pdSolution);
+	double dCalculateContractCost(double * pdSolution);
+	double dCalculateIncome(double * pdSolution);
+	double dCalculateProfit(double * pdSolution);
 
 	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution);
 	bool bSave(string sFileName);
 	bool bRead(string sFileName);
+
+	void vGenerateInstance(int iInstanceSeed);
 };
 
