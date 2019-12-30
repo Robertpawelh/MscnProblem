@@ -31,11 +31,11 @@ CMscnProblem::CMscnProblem() {
 
 	pd_p = new double[i_S];
 
-	ppd_xdminmax = new double*[2 * i_D]; 
+	ppd_xdminmax = new double*[2 * i_D];
 	for (int i = 0; i < 2 * i_D; i++) {
 		ppd_xdminmax[i] = new double[i_F];
 	}
-	ppd_xfminmax = new double*[2 * i_F]; 
+	ppd_xfminmax = new double*[2 * i_F];
 	for (int i = 0; i < 2 * i_F; i++) {
 		ppd_xfminmax[i] = new double[i_M];
 	}
@@ -96,7 +96,6 @@ bool CMscnProblem::bSetD(const int iVal) {
 	double* pd_new_sd = new double[iVal];
 	double* pd_new_ud = new double[iVal];
 	double** ppd_new_cd = new double*[iVal];
-	//double** ppd_new_xd = new double*[iVal];
 	double** ppd_new_xdminmax = new double*[2 * iVal];
 
 	int i_loop_len = (iVal < i_D) ? iVal : i_D;
@@ -151,13 +150,11 @@ bool CMscnProblem::bSetF(const int iVal) {
 	double* pd_new_uf = new double[iVal];
 	double** ppd_new_cf = new double*[iVal];
 	double** ppd_new_cd = new double*[i_D];
-	double** ppd_new_xd = new double*[i_D];
 	double** ppd_new_xdminmax = new double*[2 * i_D];
 	double** ppd_new_xfminmax = new double*[2 * iVal];
 
 	for (int i = 0; i < i_D; i++) {
 		ppd_new_cd[i] = new double[iVal];
-		ppd_new_xd[i] = new double[iVal];
 	}
 	for (int i = 0; i < 2 * i_D; i++) {
 		ppd_new_xdminmax[i] = new double[iVal];
@@ -428,6 +425,7 @@ bool CMscnProblem::bSetValInSd(int iIndex, double dVal) {
 		return false;
 	}
 	pd_sd[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInSf(int iIndex, double dVal) {
@@ -435,6 +433,7 @@ bool CMscnProblem::bSetValInSf(int iIndex, double dVal) {
 		return false;
 	}
 	pd_sf[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInSm(int iIndex, double dVal) {
@@ -442,6 +441,7 @@ bool CMscnProblem::bSetValInSm(int iIndex, double dVal) {
 		return false;
 	}
 	pd_sm[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInSs(int iIndex, double dVal) {
@@ -449,6 +449,7 @@ bool CMscnProblem::bSetValInSs(int iIndex, double dVal) {
 		return false;
 	}
 	pd_ss[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInUd(int iIndex, double dVal) {
@@ -456,6 +457,7 @@ bool CMscnProblem::bSetValInUd(int iIndex, double dVal) {
 		return false;
 	}
 	pd_ud[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInUf(int iIndex, double dVal) {
@@ -463,6 +465,7 @@ bool CMscnProblem::bSetValInUf(int iIndex, double dVal) {
 		return false;
 	}
 	pd_uf[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInUm(int iIndex, double dVal) {
@@ -470,6 +473,7 @@ bool CMscnProblem::bSetValInUm(int iIndex, double dVal) {
 		return false;
 	}
 	pd_um[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInP(int iIndex, double dVal) {
@@ -477,6 +481,7 @@ bool CMscnProblem::bSetValInP(int iIndex, double dVal) {
 		return false;
 	}
 	pd_p[iIndex] = dVal;
+	return true;
 }
 
 bool CMscnProblem::bSetValInXdminmax(int iRow, int iColumn, double dVal) {
@@ -503,7 +508,7 @@ bool CMscnProblem::bSetValInXmminmax(int iRow, int iColumn, double dVal) {
 	return true;
 }
 
-double CMscnProblem::dGetMin(double * pdSolution, int iId) {
+double CMscnProblem::dGetMin(int iId) {
 	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
 	}
@@ -529,7 +534,7 @@ double CMscnProblem::dGetMin(double * pdSolution, int iId) {
 	return -1; //tu powinna byc referencja bledu zmieniona na false;
 }
 
-double CMscnProblem::dGetMax(double * pdSolution, int iId) {
+double CMscnProblem::dGetMax(int iId) {
 
 	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
@@ -556,38 +561,38 @@ double CMscnProblem::dGetMax(double * pdSolution, int iId) {
 }
 
 
-double CMscnProblem::dCalculateTransportCost(double* pdSolution) {
+double CMscnProblem::dCalculateTransportCost(double* pdSolution) {	//te podfunkcje sa raczej niepotrzbne i dodaja obliczen
 	double d_sum = 0;
 	int count = INDEX_OF_FIRST_DATA_IN_SOLUTION;
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
-			d_sum += ppd_cd[i][j] * pdSolution[count++]; //* ppd_xd[i][j];
+			d_sum += ppd_cd[i][j] * pdSolution[count++];
 		}
 	}
 
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			d_sum += ppd_cf[i][j] * pdSolution[count++];//* ppd_xf[i][j];
+			d_sum += ppd_cf[i][j] * pdSolution[count++];
 		}
 	}
 
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			d_sum += ppd_cm[i][j] * pdSolution[count++]; //* ppd_xm[i][j];
+			d_sum += ppd_cm[i][j] * pdSolution[count++];
 		}
 	}
 	return d_sum;
 }
 
-double CMscnProblem::dCalculateContractCost(double* pdSolution) {
+double CMscnProblem::dCalculateContractCost(double* pdSolution) { //te podfunkcje sa raczej niepotrzbne i dodaja obliczen
 	double d_sum = 0;
 	int count = INDEX_OF_FIRST_DATA_IN_SOLUTION;
 
 	for (int i = 0; i < i_D; i++) {
 		double d_count_of_element = 0;
 		int j = 0;
-		while (j<i_F && d_count_of_element ==0){
-			d_count_of_element += pdSolution[count++];//ppd_xd[i][j];
+		while (j < i_F && d_count_of_element == 0) {
+			d_count_of_element += pdSolution[count++];
 			j++;
 		}
 		if (d_count_of_element > 0) {
@@ -599,7 +604,7 @@ double CMscnProblem::dCalculateContractCost(double* pdSolution) {
 		double d_count_of_element = 0;
 		int j = 0;
 		while (j < i_M && d_count_of_element == 0) {
-			d_count_of_element += pdSolution[count++];// ppd_xf[i][j];
+			d_count_of_element += pdSolution[count++];// 
 			j++;
 		}
 		if (d_count_of_element > 0) {
@@ -623,7 +628,7 @@ double CMscnProblem::dCalculateContractCost(double* pdSolution) {
 }
 
 
-double CMscnProblem::dCalculateIncome(double * pdSolution) {
+double CMscnProblem::dCalculateIncome(double * pdSolution) {  //te podfunkcje sa raczej niepotrzbne i dodaja obliczen
 	double d_sum = 0;
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
@@ -650,7 +655,7 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 }
 
 
-bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
+bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {	// dodaj informacje o bledzie i upewij sie ze wszystko sprawdzasz
 	if (pdSolution == NULL) {
 		return false;
 	}
@@ -737,52 +742,140 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution) {
 	return true;
 }
 
-
-bool CMscnProblem::bSave(string sFileName) {
+bool CMscnProblem::bSaveProblemInstance(string sFileName) { //zrob dwa bSave. wypisujace rozwiazanie i objekt
 	FILE* pf_file = fopen(sFileName.c_str(), "w+");
 	if (pf_file == NULL) {
 		return false;
 	}
+	fprintf(pf_file, "%s %i", "D", i_D);
+	fprintf(pf_file, "%s %i", "\nF", i_F);
+	fprintf(pf_file, "%s %i", "\nM", i_M);
+	fprintf(pf_file, "%s %i", "\nS", i_S);
+
+	fprintf(pf_file, "%s", "\nsd\n");
+	for (int i = 0; i < i_D; i++) {
+		fprintf(pf_file, "%lf", pd_sd[i]);
+	}
+
+	fprintf(pf_file, "%s", "\nsf\n");
+	for (int i = 0; i < i_F; i++) {
+		fprintf(pf_file, "%lf", pd_sf[i]);
+	}
+
+	fprintf(pf_file, "%s", "\nsm\n");
+	for (int i = 0; i < i_M; i++) {
+		fprintf(pf_file, "%lf", pd_sm[i]);
+	}
+
+	fprintf(pf_file, "%s", "\nss\n");
+	for (int i = 0; i < i_S; i++) {
+		fprintf(pf_file, "%lf", pd_ss[i]);
+	}
+
+	fprintf(pf_file, "%s", "\ncd\n");
+	for (int i = 0; i < i_D; i++) {
+		for (int j = 0; j < i_F; j++) {
+			fprintf(pf_file, "%lf", ppd_cd[i][j]);
+		}
+	}
+
+	fprintf(pf_file, "%s", "\ncf\n");
+	for (int i = 0; i < i_F; i++) {
+		for (int j = 0; j < i_M; j++) {
+			fprintf(pf_file, "%lf", ppd_cf[i][j]);
+		}
+	}
+
+	fprintf(pf_file, "%s", "\ncm\n");
+	for (int i = 0; i < i_M; i++) {
+		for (int j = 0; j < i_S; j++) {
+			fprintf(pf_file, "%lf", ppd_cm[i][j]);
+		}
+	}
+
+	fprintf(pf_file, "%s", "\nud\n");
+	for (int i = 0; i < i_D; i++) {
+		fprintf(pf_file, "%lf", pd_ud[i]);
+	}
+
+	fprintf(pf_file, "%s", "\nuf\n");
+	for (int i = 0; i < i_F; i++) {
+		fprintf(pf_file, "%lf", pd_uf[i]);
+	}
+
+	fprintf(pf_file, "%s", "\num\n");
+	for (int i = 0; i < i_M; i++) {
+		fprintf(pf_file, "%lf", pd_um[i]);
+	}
+
+	fprintf(pf_file, "%s", "\np\n");
+	for (int i = 0; i < i_S; i++) {
+		fprintf(pf_file, "%lf", pd_p[i]);
+	}
+
+	fprintf(pf_file, "%s", "\nxdminmax\n");
+	for (int i = 0; i < 2 * i_D; i += 2) {
+		for (int j = 0; j < i_F; j++) {
+			fprintf(pf_file, "%lf ", ppd_xdminmax[i][j]);
+			fprintf(pf_file, "%lf ", ppd_xdminmax[i + 1][j]);
+		}
+	}
+
+	fprintf(pf_file, "%s", "\nxfminmax\n");
+	for (int i = 0; i < 2 * i_F; i += 2) {
+		for (int j = 0; j < i_M; j++) {
+			fprintf(pf_file, "%lf ", ppd_xfminmax[i][j]);
+			fprintf(pf_file, "%lf ", ppd_xfminmax[i + 1][j]);
+		}
+	}
+
+	fprintf(pf_file, "%s", "\nxmminmax\n");
+	for (int i = 0; i < 2 * i_M; i += 2) {
+		for (int j = 0; j < i_S; j++) {
+			fprintf(pf_file, "%lf ", ppd_xmminmax[i][j]);
+			fprintf(pf_file, "%lf ", ppd_xmminmax[i + 1][j]);
+		}
+	}
 	return true;
-/*	fprintf(pf_file, "%s", "D ");
-	fprintf(pf_file, "%i", i_D);
-	fprintf(pf_file, "%s", "\nF ");
-	fprintf(pf_file, "%i", i_F);
-	fprintf(pf_file, "%s", "\nM ");
-	fprintf(pf_file, "%i", i_M);
-	fprintf(pf_file, "%s", "\nS ");
-	fprintf(pf_file, "%i", i_S);
+}
+
+bool CMscnProblem::bSaveSolution(string sFileName, double* pdSolution) { //zrob dwa bSave. wypisujace rozwiazanie i objekt
+	FILE* pf_file = fopen(sFileName.c_str(), "w+");
+	if (pf_file == NULL) {
+		return false;
+	}
+	int i_count = 0;
+	fprintf(pf_file, "%s %i", "D", pdSolution[i_count++]);
+	fprintf(pf_file, "%s %i", "\nF", pdSolution[i_count++]);
+	fprintf(pf_file, "%s %i", "\nM", pdSolution[i_count++]);
+	fprintf(pf_file, "%s %i", "\nS", pdSolution[i_count++]);
 
 	fprintf(pf_file, "%s", "\nxd\n");
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
-			fprintf(pf_file, "%lf", ppd_xd[i][j]);
-			fprintf(pf_file, "%s", " ");
+			fprintf(pf_file, "%lf ", pdSolution[i_count++]);
 		}
 	}
 
 	fprintf(pf_file, "%s", "\nxf\n");
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			fprintf(pf_file, "%lf", ppd_xf[i][j]);
-			fprintf(pf_file, "%s", " ");
+			fprintf(pf_file, "%lf ", pdSolution[i_count++]);
 		}
 	}
 
 	fprintf(pf_file, "%s", "\nxm\n");
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			fprintf(pf_file, "%lf", ppd_xm[i][j]);
-			fprintf(pf_file, "%s", " ");
+			fprintf(pf_file, "%lf ", pdSolution[i_count++]);
 		}
 	}
 	fclose(pf_file);
 	return true;
-	*/
 };
 
 
-bool CMscnProblem::bRead(string sFileName) {
+bool CMscnProblem::bReadProblemInstance(string sFileName) { // zrob bread dla solution
 	FILE* pf_file = fopen(sFileName.c_str(), "r");
 	if (pf_file == NULL) {
 		return false;
@@ -909,77 +1002,99 @@ bool CMscnProblem::bRead(string sFileName) {
 	return true;
 }
 
+double* CMscnProblem::pdReadSolution(string sFileName) { //sprawdz czy dziala
+	FILE* pf_file = fopen(sFileName.c_str(), "r");
+	if (pf_file == NULL) {
+		return false;
+	}
+
+	double * pd_solution = new double[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_F * i_D + i_D * i_M + i_M * i_S];
+	char c_val[16]; //stala
+	int i_counter = 0;
+	fscanf(pf_file, "%[^0-9] %i", c_val, &pd_solution[i_counter++]);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &pd_solution[i_counter++]);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &pd_solution[i_counter++]);
+	fscanf(pf_file, "%[^0-9] %i", c_val, &pd_solution[i_counter++]);
+
+	for (int i = 0; i < i_F * i_D + i_D * i_M + i_M * i_S; i++) {
+		fscanf(pf_file, "%[^0-9] %lf", c_val, &pd_solution[i_counter + i]);
+	}
+
+	fclose(pf_file);
+	return pd_solution;
+}
+
 void CMscnProblem::vGenerateInstance(int iInstanceSeed) {
 }
-	/*CRandom random(iInstanceSeed);
-	for (int i = 0; i < i_D; i++) {
-		bSetValInSd(i, random);
-		cout << "sd[" << i << +"]: " << pd_sd[i] << "\n";
-	}
+/*CRandom random(iInstanceSeed);
+for (int i = 0; i < i_D; i++) {
+	bSetValInSd(i, random);
+	cout << "sd[" << i << +"]: " << pd_sd[i] << "\n";
+}
 
-	for (int i = 0; i < i_F; i++) {
+for (int i = 0; i < i_F; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInSf(i, d_num);
+	cout << "sf[" << i << +"]: " << pd_sf[i] << "\n";
+}
+
+for (int i = 0; i < i_M; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInSm(i, d_num);
+	cout << "sm[" << i << +"]: " << pd_sm[i] << "\n";
+}
+
+for (int i = 0; i < i_S; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInSs(i, d_num);
+	cout << "ss[" << i << +"]: " << pd_ss[i] << "\n";
+}
+
+for (int i = 0; i < i_D; i++) {
+	for (int j = 0; j < i_F; j++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInSf(i, d_num);
-		cout << "sf[" << i << +"]: " << pd_sf[i] << "\n";
+		bSetValInCd(i, j, d_num);
+		cout << "cd[" << i << "][" << j << "]: " << ppd_cd[i][j] << "\n";
 	}
+}
 
-	for (int i = 0; i < i_M; i++) {
+for (int i = 0; i < i_F; i++) {
+	for (int j = 0; j < i_M; j++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInSm(i, d_num);
-		cout << "sm[" << i << +"]: " << pd_sm[i] << "\n";
+		bSetValInCf(i, j, d_num);
+		cout << "cf[" << i << "][" << j << "]: " << ppd_cf[i][j] << "\n";
 	}
+}
 
-	for (int i = 0; i < i_S; i++) {
+for (int i = 0; i < i_M; i++) {
+	for (int j = 0; j < i_S; j++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInSs(i, d_num);
-		cout << "ss[" << i << +"]: " << pd_ss[i] << "\n";
+		bSetValInCm(i, j, d_num);
+		cout << "cm[" << i << "][" << j << "]: " << ppd_cm[i][j] << "\n";
 	}
+}
 
-	for (int i = 0; i < i_D; i++) {
-		for (int j = 0; j < i_F; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInCd(i, j, d_num);
-			cout << "cd[" << i << "][" << j << "]: " << ppd_cd[i][j] << "\n";
-		}
-	}
+for (int i = 0; i < i_D; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInUd(i, d_num);
+	cout << "ud[" << i << "]: " << pd_ud[i] << "\n";
+}
 
-	for (int i = 0; i < i_F; i++) {
-		for (int j = 0; j < i_M; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInCf(i, j, d_num);
-			cout << "cf[" << i << "][" << j << "]: " << ppd_cf[i][j] << "\n";
-		}
-	}
+for (int i = 0; i < i_D; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInUf(i, d_num);
+	cout << "uf[" << i << "]: " << pd_uf[i] << "\n";
+}
 
-	for (int i = 0; i < i_M; i++) {
-		for (int j = 0; j < i_S; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInCm(i, j, d_num);
-			cout << "cm[" << i << "][" << j << "]: " << ppd_cm[i][j] << "\n";
-		}
-	}
+for (int i = 0; i < i_D; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInUm(i, d_num);
+	cout << "um[" << i << "]: " << pd_um[i] << "\n";
+}
 
-	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInUd(i, d_num);
-		cout << "ud[" << i << "]: " << pd_ud[i] << "\n";
-	}
-
-	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInUf(i, d_num);
-		cout << "uf[" << i << "]: " << pd_uf[i] << "\n";
-	}
-
-	for (int i = 0; i < i_D; i++) {
-		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInUm(i, d_num);
-		cout << "um[" << i << "]: " << pd_um[i] << "\n";
-	}
-
-	for (int i = 0; i < i_S; i++) {
-		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-		bSetValInP(i, d_num);
-		cout << "p[" << i << "]: " << pd_p[i] << "\n";
-	}*/
+for (int i = 0; i < i_S; i++) {
+	fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
+	bSetValInP(i, d_num);
+	cout << "p[" << i << "]: " << pd_p[i] << "\n";
+}*/
 

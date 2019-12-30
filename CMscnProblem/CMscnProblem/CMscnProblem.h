@@ -2,11 +2,12 @@
 #include <iostream>
 #include <string>
 #include <stdio.h>
+#include "CRandom.h"
 
 #define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
 using namespace std;
 
-class CMscnProblem{
+class CMscnProblem {
 private:
 	int i_D;
 	int i_F;
@@ -30,10 +31,6 @@ private:
 	double** ppd_xfminmax;
 	double** ppd_xmminmax;
 
-//	double** ppd_xd;
-//	double** ppd_xf;
-//	double** ppd_xm;
-
 public:
 	CMscnProblem();
 	~CMscnProblem();
@@ -42,7 +39,7 @@ public:
 	bool bSetF(const int iVal);
 	bool bSetM(const int iVal);
 	bool bSetS(const int iVal);
-	
+
 	bool bSetValInCd(int iRow, int iColumn, double dVal);
 	bool bSetValInCf(int iRow, int iColumn, double dVal);
 	bool bSetValInCm(int iRow, int iColumn, double dVal);
@@ -55,15 +52,15 @@ public:
 	bool bSetValInUd(int iIndex, double dVal);
 	bool bSetValInUf(int iIndex, double dVal);
 	bool bSetValInUm(int iIndex, double dVal);
-	
+
 	bool bSetValInP(int iIndex, double dVal);
 
 	bool bSetValInXdminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
 
-	double dGetMin(double* pdSolution, int iId);
-	double dGetMax(double* pdSolution, int iId);
+	double dGetMin(int iId);
+	double dGetMax(int iId);
 	double dCalculateTransportCost(double * pdSolution);
 	double dCalculateContractCost(double * pdSolution);
 	double dCalculateIncome(double * pdSolution);
@@ -71,8 +68,10 @@ public:
 
 	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution);
-	bool bSave(string sFileName);
-	bool bRead(string sFileName);
+	bool bSaveProblemInstance(string sFileName);
+	bool bSaveSolution(string sFileName, double *pdSolution);
+	double* pdReadSolution(string sFileName);
+	bool bReadProblemInstance(string sFileName);
 
 	void vGenerateInstance(int iInstanceSeed);
 };
