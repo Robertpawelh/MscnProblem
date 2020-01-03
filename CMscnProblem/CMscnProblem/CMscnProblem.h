@@ -5,6 +5,13 @@
 #include "CRandom.h"
 
 #define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
+#define DESC_IN_FILE_SIZE 16
+#define NULL_ERROR "pdSolution is NULL"
+#define LENGTH_ERROR "length of solution is incorrect"
+#define NEGATIVE_VAL_ERROR "negative value in solution"
+#define BIGGER_THAN_PRODUCED_ERROR "sum of ordered is bigger than sum of produced"
+#define SUM_ERROR "sum of xd < sum of xf OR sum of xf < sum of xm"
+#define MIN_MAX_ERROR "value in solution isn't in minmax range"
 using namespace std;
 
 class CMscnProblem {
@@ -59,15 +66,15 @@ public:
 	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
 
-	double dGetMin(int iId);
-	double dGetMax(int iId);
-	double dCalculateTransportCost(double * pdSolution);
+	double dGetMin(int iId, bool &bIsSuccess);
+	double dGetMax(int iId, bool &bIsSuccess);
+	double dCalculateTransportCost(double * pdSolution, bool & bIsSuccess);
 	double dCalculateContractCost(double * pdSolution);
 	double dCalculateIncome(double * pdSolution);
-	double dCalculateProfit(double * pdSolution);
+	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
 
 	double dGetQuality(double *pdSolution, bool &isSuccess);
-	bool bConstraintsSatisfied(double *pdSolution);
+	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
 	bool bSaveProblemInstance(string sFileName);
 	bool bSaveSolution(string sFileName, double *pdSolution);
 	double* pdReadSolution(string sFileName);
