@@ -12,6 +12,33 @@
 #define BIGGER_THAN_PRODUCED_ERROR "sum of ordered is bigger than sum of produced"
 #define SUM_ERROR "sum of xd < sum of xf OR sum of xf < sum of xm"
 #define MIN_MAX_ERROR "value in solution isn't in minmax range"
+
+#define MIN_CD 10
+#define MAX_CD 100
+#define MIN_CF 10
+#define MAX_CF 200
+#define MIN_CM 10
+#define MAX_CM 300
+
+#define MIN_UD 10
+#define MAX_UD 400
+#define MIN_UF 10
+#define MAX_UF 400
+#define MIN_UM 10
+#define MAX_UM 400
+
+#define MIN_P 10
+#define MAX_P 500
+
+#define MIN_SD 1
+#define MAX_SD 1024
+#define MIN_SF 2
+#define MAX_SF 512
+#define MIN_SM 4
+#define MAX_SM 256
+#define MIN_SS 8
+#define MAX_SS 128
+
 using namespace std;
 
 class CMscnProblem {
@@ -66,19 +93,29 @@ public:
 	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
 
+	int iGetD() { return i_D; };
+	int iGetF() { return i_F; };
+	int iGetM() { return i_M; };
+	int iGetS() { return i_S; };
+
 	double dGetMin(int iId, bool &bIsSuccess);
 	double dGetMax(int iId, bool &bIsSuccess);
+
 	double dCalculateTransportCost(double * pdSolution, bool & bIsSuccess);
 	double dCalculateContractCost(double * pdSolution);
 	double dCalculateIncome(double * pdSolution);
 	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
+	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
-	double dGetQuality(double *pdSolution, bool &isSuccess);
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
+
 	bool bSaveProblemInstance(string sFileName);
 	bool bSaveSolution(string sFileName, double *pdSolution);
+
 	double* pdReadSolution(string sFileName);
 	bool bReadProblemInstance(string sFileName);
+
+	void vPrintInstance();
 
 	void vGenerateInstance(int iInstanceSeed);
 };
