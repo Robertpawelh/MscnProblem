@@ -3,52 +3,38 @@
 #include "CRandomSearch.h"
 
 int main() {
-
-//	c_problem_object.bSetD(2);
-//	c_problem_object.bSetF(2);
-//	c_problem_object.bSetM(2);
-//	c_problem_object.bSetS(2);
-
-
-	/*
-	cout << c_problem_object.bReadProblemInstance("test_2.txt"); //sprawedz czy zapisuje wieksze poprawnie
-	bool bIsSuccess;
-	string sErrorCode;
-	double * pd_sample_solution;
-	pd_sample_solution = c_problem_object.pdReadSolution("sol_2.txt"); //sprawedz czy zapisuje wieksze poprawnie
-	*/
-	//c_problem_object.bConstraintsSatisfied(pd_sample_solution, sErrorCode);
-	//cout << "Kod bledu: " << sErrorCode << endl;
-	//cout << "\nPROFIT: " << c_problem_object.dGetQuality(pd_sample_solution, bIsSuccess) << endl;
-	//cout << "IS SUCCESS: " << bIsSuccess;
-/*	cout << endl;
-	int x = 0;
-	c_problem_object.bConstraintsSatisfied(pd_sample_solution, sErrorCode);
-	cout << "Kod bledu: " << sErrorCode << endl;
-	cout << "\nPROFIT: " << c_problem_object.dGetQuality(pd_sample_solution, isSuccess) << endl;
-	*/
-	//c_problem_object.bSaveProblemInstance("testsave.txt");			//sprawedz czy zapisuje wieksze poprawnie
-	/*
-																	//c_problem_object.bSaveSolution("testsol.txt", pd_sample_solution); //sprawdz czy zapisuje wieksze poprawnie
-
-	cout << endl << "QUAL: " << c_problem_object.dGetQuality(pd_sample_solution, isSuccess) << endl;
-	CRandom c_rand_generator (10);
-	cout << c_rand_generator.i_random(0, 5) << endl;
-*/	
-//	delete[] pd_sample_solution;
 	bool b_is_success;
-	CMscnProblem *c_problem_object = new CMscnProblem(); //przy d, f, m, s = 1 minmaxy sie psuhja
-	c_problem_object->bSetD(8);
-	c_problem_object->bSetF(2);
-	c_problem_object->bSetM(3);
-	c_problem_object->bSetS(2);
-	c_problem_object->vGenerateInstance(10);
-	//c_problem_object->vPrintInstance();
-	CRandomSearch c_search(c_problem_object);
-	for (int i = 0; i < 10; i++) {
+	string s_error_code;
+	CMscnProblem *pc_problem_object = new CMscnProblem();
+	pc_problem_object->bSetD(3);
+	pc_problem_object->bSetF(3);
+	pc_problem_object->bSetM(3);
+	pc_problem_object->bSetS(2);
+	pc_problem_object->vGenerateInstance(10);
+	//pc_problem_object->vPrintInstance();
+	CRandomSearch c_search(pc_problem_object);
+	for (int i = 0; i < 3; i++) {
 		cout << "PROBA NR " << i << ": " << endl;
 		double * pd_best = c_search.pd_findBestSolution(i);
-	//	cout << c_problem_object->dGetQuality(pd_best, b_is_success) << endl;
+		if (pc_problem_object->bConstraintsSatisfied(pd_best, s_error_code)) {
+			cout << pc_problem_object->dGetQuality(pd_best, b_is_success) << endl;
+		}
+		else {
+			cout << s_error_code << endl;
+		}
 	}
 
+	/* Parametry do generowania instancji zostaly dobrane tak, aby byly w stanie generowac sie dosc rozsadne instancje problemu.
+	Zastosowane zostaly stale. Ich wartosc ustalono tak, aby zysk ze sklepow na ogol byl wiekszy niz suma kosztow transportu na wszystkich etapach.
+	Popyt rowniez powinien byc na ogol nizszy, niz mozliwosci magazynowania, tak samo pojemnosc magazynow nizsza niz wydajnosc fabryk,
+	a wydajnosc fabryk nizsza niz mozliwosci dostawcze.
+
+	Pomiedzy klasami CRandomSearch i CMscnProblem zachodzi agregacja slaba, gdyz CMscnProblem moze istniec bez klasy
+	szukajacej rozwiazania.
+	Takich klas mozna utworzyc wiele, wiec nie powinien byc zalezny od odpowiedniej implementacji. Nie mozemy natomiast utworzyc
+	obiektu klasy CRandomSearch bez obiektu problemu, gdyz w zamysle ma byc to klasa szukajaca rozwiazania dla konkretnego problemu
+	mscn.
+	Dziedziczenie w tym zadaniu rowniez mija sie z celem, gdyz obiekt klasy CRandomSearch powinien skupiac sie jedynie na
+	operacjach zwiazanych z rozwiazywaniem problemu, nie powinien m.in. moc go zmieniac.
+	*/
 }

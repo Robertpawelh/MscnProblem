@@ -631,9 +631,11 @@ double CMscnProblem::dCalculateContractCost(double* pdSolution) {
 
 double CMscnProblem::dCalculateIncome(double * pdSolution) {
 	double d_income = 0;
+	int i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M;
+
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			d_income += pd_p[i] * pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M];
+			d_income += pd_p[j] * pdSolution[i_counter++];
 		}
 	}
 	return d_income;
@@ -643,7 +645,7 @@ double CMscnProblem::dCalculateProfit(double* pdSolution, bool & bIsSuccess) {
 	return dCalculateIncome(pdSolution) - dCalculateTransportCost(pdSolution, bIsSuccess) - dCalculateContractCost(pdSolution);
 }
 
-double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {		// SPRAWDZANIE, CZY WARTOSCI NIE SA UJEMNE
+double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 	bIsSuccess = true;
 
 	if (pdSolution == NULL) {
@@ -661,13 +663,13 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {		// SP
 }
 
 
-bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCode) {	// dodaj informacje o bledzie i upewij sie ze wszystko sprawdzasz. dodawaj do lancucha string info o bledzei i sprawdzaj wszystko
+bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCode) {
 	sErrorCode = "";
 	if (pdSolution == NULL) {
 		sErrorCode = NULL_ERROR;
 		return false;
 	}
-	// sprawdzam 1) null 2) dlugosc (mniej wiecej) 3) ujemnosc 4) czy sumy sa od siebie mniejsze, choc to jest chyba bardzeij zawile (rozrysuj)
+
 	int i_counter = 0;
 	if (i_D != pdSolution[i_counter++] ||
 		i_F != pdSolution[i_counter++] ||
@@ -749,7 +751,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 
 	for (int i = 0; i < i_S; i++) {
 		for (int j = 0; j < i_M; j++) {
-			d_current_sum_xm += pdSolution[i_counter + i_M * j]; // upewnij sie czy to jest ok
+			d_current_sum_xm += pdSolution[i_counter + i_M * j];
 		}
 
 		if (d_current_sum_xm > pd_ss[i]) {
@@ -955,32 +957,27 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 	for (int i = 0; i < i_D; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSd(i, d_num);
-		cout << "sd[" << i << +"]: " << pd_sd[i] << "\n";
 	}
 
 	for (int i = 0; i < i_F; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSf(i, d_num);
-		cout << "sf[" << i << +"]: " << pd_sf[i] << "\n";
 	}
 
 	for (int i = 0; i < i_M; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSm(i, d_num);
-		cout << "sm[" << i << +"]: " << pd_sm[i] << "\n";
 	}
 
 	for (int i = 0; i < i_S; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInSs(i, d_num);
-		cout << "ss[" << i << +"]: " << pd_ss[i] << "\n";
 	}
 
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCd(i, j, d_num);
-			cout << "cd[" << i << "][" << j << "]: " << ppd_cd[i][j] << "\n";
 		}
 	}
 
@@ -988,7 +985,6 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 		for (int j = 0; j < i_M; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCf(i, j, d_num);
-			cout << "cf[" << i << "][" << j << "]: " << ppd_cf[i][j] << "\n";
 		}
 	}
 
@@ -996,42 +992,35 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 		for (int j = 0; j < i_S; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInCm(i, j, d_num);
-			cout << "cm[" << i << "][" << j << "]: " << ppd_cm[i][j] << "\n";
 		}
 	}
 
 	for (int i = 0; i < i_D; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUd(i, d_num);
-		cout << "ud[" << i << "]: " << pd_ud[i] << "\n";
 	}
 
 	for (int i = 0; i < i_F; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUf(i, d_num);
-		cout << "uf[" << i << "]: " << pd_uf[i] << "\n";
 	}
 
 	for (int i = 0; i < i_M; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInUm(i, d_num);
-		cout << "um[" << i << "]: " << pd_um[i] << "\n";
 	}
 
 	for (int i = 0; i < i_S; i++) {
 		fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 		bSetValInP(i, d_num);
-		cout << "p[" << i << "]: " << pd_p[i] << "\n";
 	}
 
 	for (int i = 0; i < 2 * i_D; i += 2) {
 		for (int j = 0; j < i_F; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXdminmax(i, j, d_num);
-			cout << "xdminmax[" << i << ", " << j << "]: " << ppd_xdminmax[i][j] << "\n";
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXdminmax(i + 1, j, d_num);
-			cout << "xdminmax[" << i + 1 << ", " << j << "]: " << ppd_xdminmax[i + 1][j] << "\n";
 		}
 	}
 
@@ -1039,10 +1028,8 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 		for (int j = 0; j < i_M; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXfminmax(i, j, d_num);
-			cout << "xfminmax[" << i << ", " << j << "]: " << ppd_xfminmax[i][j] << "\n";
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXfminmax(i + 1, j, d_num);
-			cout << "xfminmax[" << i + 1 << ", " << j << "]: " << ppd_xfminmax[i + 1][j] << "\n";
 		}
 	}
 
@@ -1050,10 +1037,8 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 		for (int j = 0; j < i_S; j++) {
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXmminmax(i, j, d_num);
-			cout << "xmminmax[" << i << ", " << j << "]: " << ppd_xmminmax[i][j] << "\n";
 			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
 			bSetValInXmminmax(i + 1, j, d_num);
-			cout << "xmminmax[" << i + 1 << ", " << j << "]: " << ppd_xmminmax[i + 1][j] << "\n";
 		}
 	}
 
@@ -1064,7 +1049,7 @@ bool CMscnProblem::bReadProblemInstance(string sFileName) {
 double* CMscnProblem::pdReadSolution(string sFileName) {
 	FILE* pf_file = fopen(sFileName.c_str(), "r");
 	if (pf_file == NULL) {
-		return false;
+		return nullptr;
 	}
 
 	double * pd_solution = new double[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_F * i_D + i_D * i_M + i_M * i_S];
@@ -1146,7 +1131,7 @@ void CMscnProblem::vGenerateInstance(int iInstanceSeed) {
 		for (int j = 0; j < i_M; j++) {
 			double d_d_to_f_max = 0;
 			for (int k = 1; k < 2 * i_D; k += 2) {
-				d_d_to_f_max += ppd_xdminmax[k][i/2];
+				d_d_to_f_max += ppd_xdminmax[k][i / 2];
 			}
 
 			bSetValInXfminmax(i, j, 0);
@@ -1158,7 +1143,7 @@ void CMscnProblem::vGenerateInstance(int iInstanceSeed) {
 		for (int j = 0; j < i_S; j++) {
 			double d_f_to_m_max = 0;
 			for (int k = 1; k < 2 * i_F; k += 2) {
-				d_f_to_m_max += ppd_xfminmax[k][i/2];
+				d_f_to_m_max += ppd_xfminmax[k][i / 2];
 			}
 
 			bSetValInXmminmax(i, j, 0);

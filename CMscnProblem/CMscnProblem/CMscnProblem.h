@@ -27,8 +27,8 @@
 #define MIN_UM 10
 #define MAX_UM 400
 
-#define MIN_P 10
-#define MAX_P 500
+#define MIN_P 100
+#define MAX_P 700
 
 #define MIN_SD 1
 #define MAX_SD 1024

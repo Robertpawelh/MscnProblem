@@ -152,12 +152,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CDiffEvol.h" />
+    <ClInclude Include="CIndividual.h" />
     <ClInclude Include="CMscnProblem.h" />
     <ClInclude Include="CRandom.h" />
     <ClInclude Include="CRandomSearch.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CDiffEvol.cpp" />
+    <ClCompile Include="CIndividual.cpp" />
     <ClCompile Include="CMscnProblem.cpp" />
     <ClCompile Include="CRandom.cpp" />
     <ClCompile Include="CRandomSearch.cpp" />
