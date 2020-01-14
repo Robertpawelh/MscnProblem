@@ -116,6 +116,7 @@ public:
 	bool bReadProblemInstance(string sFileName);
 
 	void vPrintInstance();
+	void vPrintSolution(double * pdSolution);
 
 	void vGenerateInstance(int iInstanceSeed);
 };

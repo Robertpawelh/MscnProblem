@@ -1,40 +1,54 @@
 #include "pch.h"
 #include "CMscnProblem.h"
 #include "CRandomSearch.h"
+#include "CDiffEvol.h"
 
 int main() {
 	bool b_is_success;
 	string s_error_code;
 	CMscnProblem *pc_problem_object = new CMscnProblem();
-	pc_problem_object->bSetD(3);
+	pc_problem_object->bSetD(4);
 	pc_problem_object->bSetF(3);
 	pc_problem_object->bSetM(3);
 	pc_problem_object->bSetS(2);
-	pc_problem_object->vGenerateInstance(10);
-	//pc_problem_object->vPrintInstance();
+	pc_problem_object->vGenerateInstance(1);
+//	pc_problem_object->vPrintInstance();
+
 	CRandomSearch c_search(pc_problem_object);
-	for (int i = 0; i < 3; i++) {
+	CDiffEvol c_diff_evol(pc_problem_object);
+	for (int i = 0; i < 1; i++) {
 		cout << "PROBA NR " << i << ": " << endl;
-		double * pd_best = c_search.pd_findBestSolution(i);
-		if (pc_problem_object->bConstraintsSatisfied(pd_best, s_error_code)) {
-			cout << pc_problem_object->dGetQuality(pd_best, b_is_success) << endl;
+		cout << "BY RANDOM:\n";
+		double * pd_best_by_random = c_search.pdFindBestSolution(i);
+		if (pc_problem_object->bConstraintsSatisfied(pd_best_by_random, s_error_code)) {
+			pc_problem_object->vPrintSolution(pd_best_by_random);
+			cout << "\nPROFIT: " << pc_problem_object->dGetQuality(pd_best_by_random, b_is_success) << endl;
 		}
 		else {
-			cout << s_error_code << endl;
+			cout << "RANDOM SOL IS BAD: " << s_error_code << endl;
 		}
+		
+		cout << "\nBY DIFF:\n";
+		double * pd_best_by_diff = c_diff_evol.pdFindBestSolution(i);
+		if (pc_problem_object->bConstraintsSatisfied(pd_best_by_diff, s_error_code)) {
+			pc_problem_object->vPrintSolution(pd_best_by_diff);
+			cout << "\nPROFIT: " << pc_problem_object->dGetQuality(pd_best_by_diff, b_is_success) << endl;
+		}
+		else {
+			cout << "DIFF SOL IS BAD: " << s_error_code << endl;
+		}
+		delete pd_best_by_diff;
+		//delete pd_best_by_random;
 	}
-
-	/* Parametry do generowania instancji zostaly dobrane tak, aby byly w stanie generowac sie dosc rozsadne instancje problemu.
-	Zastosowane zostaly stale. Ich wartosc ustalono tak, aby zysk ze sklepow na ogol byl wiekszy niz suma kosztow transportu na wszystkich etapach.
-	Popyt rowniez powinien byc na ogol nizszy, niz mozliwosci magazynowania, tak samo pojemnosc magazynow nizsza niz wydajnosc fabryk,
-	a wydajnosc fabryk nizsza niz mozliwosci dostawcze.
-
-	Pomiedzy klasami CRandomSearch i CMscnProblem zachodzi agregacja slaba, gdyz CMscnProblem moze istniec bez klasy
-	szukajacej rozwiazania.
-	Takich klas mozna utworzyc wiele, wiec nie powinien byc zalezny od odpowiedniej implementacji. Nie mozemy natomiast utworzyc
-	obiektu klasy CRandomSearch bez obiektu problemu, gdyz w zamysle ma byc to klasa szukajaca rozwiazania dla konkretnego problemu
-	mscn.
-	Dziedziczenie w tym zadaniu rowniez mija sie z celem, gdyz obiekt klasy CRandomSearch powinien skupiac sie jedynie na
-	operacjach zwiazanych z rozwiazywaniem problemu, nie powinien m.in. moc go zmieniac.
-	*/
+	delete pc_problem_object;
 }
+
+/*Zastanow sie, ktory z obiektow powinien zliczac liczbe wywolan oceny przystosowania
+i umiesc kod w odpowiednim miejscu.
+
+Umiescilem licznik jako zmienna prywatna klasy CDiffEvol i inkrementuje go w metodzie, ktora odpowiada za ustawianie quality nowemu 
+osobnikowi oraz w przypadku, gdy nie mozna bylo utworzyc nowego osobnika (jego rodzice sa tacy sami, wiec nie zmieniamy aktualnego osobnika,
+jednak nalezy to potraktowac jako kolejna iteracje, w przeciwnym wypadku jesli populacja utracila swoja roznorodnosc mozemy dojsc do
+nieskonczonej petli, gdyz nie mozna znalezc roznych od siebie rodzicow.
+Licznik ten umiescilem w tej klasie, gdyz jest bezposrednio powiazany z logika wyszukiwania, czyli zakonczeniem iteracji
+*/

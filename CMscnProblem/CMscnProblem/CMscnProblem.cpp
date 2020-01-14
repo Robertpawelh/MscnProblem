@@ -914,21 +914,21 @@ bool CMscnProblem::bSaveSolution(string sFileName, double* pdSolution) {
 	fprintf(pf_file, "%s", "\nxd");
 	for (int i = 0; i < i_D; i++) {
 		for (int j = 0; j < i_F; j++) {
-			fprintf(pf_file, "\n%lf", pdSolution[i_counter++]);
+			fprintf(pf_file, "\n%lf ", pdSolution[i_counter++]);	//tu moge nieco poprawic te odstepy. w powyzszej funkcji chyba tez
 		}
 	}
 
 	fprintf(pf_file, "%s", "\nxf\n");
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			fprintf(pf_file, "\n%lf", pdSolution[i_counter++]);
+			fprintf(pf_file, "\n%lf ", pdSolution[i_counter++]);
 		}
 	}
 
 	fprintf(pf_file, "%s", "\nxm");
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			fprintf(pf_file, "\n%lf", pdSolution[i_counter++]);
+			fprintf(pf_file, "\n%lf ", pdSolution[i_counter++]);
 		}
 	}
 	fclose(pf_file);
@@ -1224,3 +1224,35 @@ void CMscnProblem::vPrintInstance() {
 	}
 
 }
+
+void CMscnProblem::vPrintSolution(double * pdSolution) {
+	int i_counter = 0;
+	cout << "D " << pdSolution[i_counter++];
+	cout << "\nF " << pdSolution[i_counter++];
+	cout << "\nM " << pdSolution[i_counter++];
+	cout << "\nS " << pdSolution[i_counter++];
+
+	cout << "\nxd";
+	for (int i = 0; i < i_D; i++) {
+		cout << "\nDostawca " << i << " -> Fabryki" << endl;
+		for (int j = 0; j < i_F; j++) {
+			cout << pdSolution[i_counter++] << "    ";
+		}
+	}
+
+	cout << "\nxf";
+	for (int i = 0; i < i_F; i++) {
+		cout << "\nFabryka " << i << " -> Magazyny" << endl;
+		for (int j = 0; j < i_M; j++) {
+			cout << pdSolution[i_counter++] << "    ";
+		}
+	}
+
+	cout << "\nxm";
+	for (int i = 0; i < i_M; i++) {
+		cout << "\nMagazyn " << i << " -> Sklepy" << endl;
+		for (int j = 0; j < i_S; j++) {
+			cout << pdSolution[i_counter++] << "    ";
+		}
+	}
+};
