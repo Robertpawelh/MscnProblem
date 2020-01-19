@@ -691,8 +691,14 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		bIsSuccess = false;
 	}
 
-	vRepairBadSolution(pdSolution);
-	return dCalculateProfit(pdSolution, bIsSuccess);
+	//vRepairBadSolution(pdSolution);
+	string str = "";
+	if (bConstraintsSatisfied(pdSolution, str)) {
+		return dCalculateProfit(pdSolution, bIsSuccess);
+	}
+	else {
+		return -1111111;
+	}
 }
 
 void CMscnProblem::vRepairBadSolution(double * pdSolution) {

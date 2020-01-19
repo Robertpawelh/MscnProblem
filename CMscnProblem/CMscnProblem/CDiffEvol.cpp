@@ -1,10 +1,10 @@
 ﻿#include "CDiffEvol.h"
 
 
-CDiffEvol::CDiffEvol(CProblem *pcProblem) {
+CDiffEvol::CDiffEvol(CProblem *pcProblem, int iSeed) {
 	pc_problem = pcProblem;
 	i_iterations_counter = 0;
-
+	c_rand_gen = CRandom (iSeed);
 	i_genotype_size = pc_problem->iGetSolutionArrayLen();
 }
 
@@ -13,8 +13,7 @@ CDiffEvol::~CDiffEvol() {
 	delete [] pc_current_population;
 }
 
-void CDiffEvol::vInitialize(int iSeed) {
-	CRandom c_generator(iSeed);
+void CDiffEvol::vInitialize() {
 	bool b_is_success;
 	string s_error_code;
 
@@ -23,7 +22,7 @@ void CDiffEvol::vInitialize(int iSeed) {
 	i_current_pop_size = POPULATION_SIZE;
 
 	for (int i = 0; i < POPULATION_SIZE; i++) {
-		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem, STARTING_VALUES_DIVIDER)); //zmien na c_rand_gen
+		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem, STARTING_VALUES_DIVIDER)); //zmien na c_rand_gen
 		pc_current_population[i].vSetGenotypeSize(i_genotype_size);
 		pc_current_population[i].vSetFitness((*pc_problem).dGetQuality(pc_current_population[i].pdGetGenotype(), b_is_success));
 	};
@@ -38,7 +37,7 @@ void CDiffEvol::vInitialize(int iSeed) {
 bool CDiffEvol::bCheckStopCondition() {
 	return i_iterations_counter < NUMBER_OF_ITERATIONS;
 }
-
+/*
 double * CDiffEvol::pdFindBestSolution(int iSeed) {
 	vInitialize(iSeed);
 	while (bCheckStopCondition()) {
@@ -54,6 +53,7 @@ double * CDiffEvol::pdFindBestSolution(int iSeed) {
 	}
 	return pd_current_best;
 }
+*/
 
 bool CDiffEvol::bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2, CIndividual* cInd3, CIndividual* cInd4) {
 	bool b_are_12_the_same = true;

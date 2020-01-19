@@ -24,7 +24,7 @@ private:
 	int i_genotype_size;
 	int i_iterations_counter;
 
-	void vInitialize(int iSeed);
+	void vInitialize();
 	bool bCheckStopCondition(); 
 	bool bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2, CIndividual* cInd3, CIndividual* cInd4);
 	void v_find_3_different_individuals(int iIndId, CIndividual** ppcInd1, CIndividual** ppcInd2, CIndividual** ppcInd3);
@@ -34,9 +34,9 @@ private:
 	void vRunIteration();
 	void v_change_population_size(int iNewSize);
 public:
-	CDiffEvol(CProblem * pcProblem);
+	CDiffEvol(CProblem * pcProblem, int iSeed);
 	~CDiffEvol();
 
-	double* pdFindBestSolution(int iSeed);
+	//double* pdFindBestSolution(int iSeed);
 };
 

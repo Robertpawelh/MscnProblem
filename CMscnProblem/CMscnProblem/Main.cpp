@@ -6,27 +6,39 @@
 int main() {
 	bool b_is_success;
 	string s_error_code;
-	//CMscnProblem *pc_problem_object = new CMscnProblem();
+
 	CMscnProblem *pc_mscn_problem_object = new CMscnProblem();
 	//pc_mscn_problem_object->bReadProblemInstance("test_2.txt");
-
-	pc_mscn_problem_object->bSetD(4);
+	pc_mscn_problem_object->bSetD(2);
 	pc_mscn_problem_object->bSetF(3);
-	pc_mscn_problem_object->bSetM(3);
+	pc_mscn_problem_object->bSetM(2);
 	pc_mscn_problem_object->bSetS(4);
 	pc_mscn_problem_object->vGenerateInstance(1);
 	//	pc_problem_object->vPrintInstance();
 
 	CProblem *pc_problem_object = pc_mscn_problem_object;
 	CRandomSearch * pc_search = new CRandomSearch(pc_problem_object, 1337);
-	//CDiffEvol * pc_diff_evol = new CDiffEvol(pc_problem_object);
+	CDiffEvol * pc_diff_evol = new CDiffEvol(pc_problem_object, 1337);
 
 	COptimizer *pc_optimizer;
-
 	CTimer c_timer;
+
+
 	double d_time_passed = 0;
 	c_timer.vSetStartNow();
 	pc_optimizer = pc_search;
+	pc_optimizer->vInitialize();
+	
+	while (d_time_passed <= MAX_TIME) {
+		pc_optimizer->vRunIteration();
+		//	pc_optimizer->pvGetCurrentBest();
+		c_timer.vSetTimePassed(&d_time_passed);
+	}
+	
+	cout << "\nBY DIFF:\n";
+	d_time_passed = 0;
+	c_timer.vSetStartNow();
+	pc_optimizer = pc_diff_evol;
 	pc_optimizer->vInitialize();
 
 	while (d_time_passed <= MAX_TIME) {
@@ -34,6 +46,8 @@ int main() {
 		//	pc_optimizer->pvGetCurrentBest();
 		c_timer.vSetTimePassed(&d_time_passed);
 	}
+
+
 }
 	/*
 	for (int i = 0; i < 1; i++) {

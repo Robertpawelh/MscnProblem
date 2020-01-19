@@ -16,8 +16,6 @@ public:
 		return pd_current_best;
 	};
 
-//	virtual double * pdFindBestSolution(int iSeed) = 0;
-
 	virtual void vInitialize() = 0;
 	virtual void vRunIteration() = 0;
 

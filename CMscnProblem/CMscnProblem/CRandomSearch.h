@@ -9,7 +9,6 @@
 
 class CRandomSearch : public COptimizer {
 private:
-//	CMscnProblem * pc_problem;
 	CRandom c_generator;
 	double d_best_quality;
 public:
@@ -17,8 +16,6 @@ public:
 
 	~CRandomSearch() {
 	}
-
-//	double * pdFindBestSolution(int iSeed);
 
 	void vInitialize();
 	void vRunIteration();

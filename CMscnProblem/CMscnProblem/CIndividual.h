@@ -1,5 +1,5 @@
 #pragma once
-class CIndividual { //dodaj zmienna genotype_len
+class CIndividual {
 private:
 	double * pd_genotype;
 	int i_genotype_size;
