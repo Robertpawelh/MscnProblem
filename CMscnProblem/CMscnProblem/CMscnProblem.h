@@ -108,6 +108,8 @@ public:
 	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
 	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
+	void vRepairBadSolution(double * pdSolution);
+	
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
 
 	double iGetSolutionArrayLen();

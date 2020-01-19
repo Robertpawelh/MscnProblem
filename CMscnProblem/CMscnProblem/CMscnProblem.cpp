@@ -677,7 +677,7 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 	if (pdSolution[0] != i_D) {
 		pdSolution[0] = i_D;
 		bIsSuccess = false;
-	} 
+	}
 	if (pdSolution[1] != i_F) {
 		pdSolution[1] = i_F;
 		bIsSuccess = false;
@@ -690,11 +690,199 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		pdSolution[3] = i_S;
 		bIsSuccess = false;
 	}
-		
-	//	bIsSuccess = false;
-	//}
 
+	vRepairBadSolution(pdSolution);
 	return dCalculateProfit(pdSolution, bIsSuccess);
+}
+
+void CMscnProblem::vRepairBadSolution(double * pdSolution) {
+	bool b_is_success;
+	double d_current_sum_xd = 0;
+	double d_current_sum_xf = 0;
+	double d_current_sum_xm = 0;
+	double d_total_sum_xd = 0;
+	double d_total_sum_xf = 0;
+	double d_total_sum_xm = 0;
+
+	int i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION;
+
+	for (int i = 0; i < i_D; i++) {
+		for (int j = 0; j < i_F; j++) {
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xd += pdSolution[i_counter];
+				i_counter++;
+			}
+			else {
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xd += pdSolution[i_counter];
+				i_counter++;
+			}
+		}
+
+	/*	while (d_current_sum_xd > pd_sd[i]) {
+			i_counter -= i_F;		// cofamy o iteracje F
+			double d_subtrahend = (d_current_sum_xd - pd_sd[i]) / (i_F - 1);
+
+			for (int j = 0; j < i_F; j++) {
+				if (pdSolution[i_counter] - d_subtrahend > dGetMin(i_counter, b_is_success)) {
+					pdSolution[i_counter] -= d_subtrahend;
+					d_current_sum_xd -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				}
+				else {
+					d_current_sum_xd -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					i_counter++;
+				}
+			}
+		}
+*/
+		d_total_sum_xd += d_current_sum_xd;
+		d_current_sum_xd = 0;
+	}
+
+	for (int i = 0; i < i_F; i++) {
+		for (int j = 0; j < i_M; j++) {
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xf += pdSolution[i_counter];
+				i_counter++;
+			}
+			else {
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xf += pdSolution[i_counter];
+				i_counter++;
+			}
+		}
+
+		/*
+		while (d_current_sum_xf > pd_sf[i]) {
+			i_counter -= i_M;		// cofamy o iteracje F
+			double d_subtrahend = (d_current_sum_xf - pd_sf[i]) / (i_M - 1);
+
+			for (int j = 0; j < i_M; j++) {
+				if (pdSolution[i_counter] - d_subtrahend >= dGetMin(i_counter, b_is_success)) {
+					pdSolution[i_counter] -= d_subtrahend;
+					d_current_sum_xf -= d_subtrahend;		//czy to sie nie infinity loopuje?
+					i_counter++;
+				}
+				else {
+					d_current_sum_xf -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					i_counter++;
+				}
+			}
+		}
+		*/
+		d_total_sum_xf += d_current_sum_xf;
+		d_current_sum_xf = 0;
+	}
+
+	for (int i = 0; i < i_M; i++) {
+		for (int j = 0; j < i_S; j++) {
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xm += pdSolution[i_counter];
+				i_counter++;
+			}
+			else {
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xm += pdSolution[i_counter];
+				i_counter++;
+			}
+		}
+
+		/*
+		while (d_current_sum_xm > pd_sm[i]) {
+			i_counter -= i_S;		// cofamy o iteracje F
+			double d_subtrahend = (d_current_sum_xm - pd_sm[i]) / i_S;
+
+			for (int j = 0; j < i_S; j++) {
+				if (pdSolution[i_counter] - d_subtrahend >= dGetMin(i_counter, b_is_success)) {
+					pdSolution[i_counter] -= d_subtrahend;
+					d_current_sum_xm -= d_subtrahend;		//czy to sie nie infinity loopuje?
+					i_counter++;
+				}
+				else {
+					d_current_sum_xm -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					i_counter++;
+				}
+			}
+		}
+		*/
+		d_total_sum_xm += d_current_sum_xm;
+		d_current_sum_xm = 0;
+	}
+
+
+	d_current_sum_xm = 0;
+	i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M;
+
+	for (int i = 0; i < i_S; i++) {
+		for (int j = 0; j < i_M; j++) {
+			d_current_sum_xm += pdSolution[i_counter + i_M * j];
+		}
+
+		/*
+		while (d_current_sum_xm > pd_ss[i]) {
+			//	i_counter -= -i_M;		// cofamy o iteracje F
+			double d_subtrahend = (d_current_sum_xm - pd_ss[i]) / (i_M-1);
+
+			for (int j = 0; j < i_M; j++) {
+				if (pdSolution[i_counter + i_M * j] - d_subtrahend > dGetMin(i_counter + i_M * j, b_is_success)) {
+					pdSolution[i_counter + i_M * j] -= d_subtrahend;
+					d_current_sum_xm -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				}
+				else {
+					d_current_sum_xm -= (pdSolution[i_counter + i_M * j] - dGetMin(i_counter + i_M * j, b_is_success));
+					pdSolution[i_counter + i_M * j] = dGetMin(i_counter + i_M * j, b_is_success);
+				}
+
+			}
+		}
+		*/
+		d_current_sum_xm = 0;
+		i_counter++;
+	}
+
+	if (d_total_sum_xd < d_total_sum_xf || d_total_sum_xf < d_total_sum_xm) {
+	//	cout << "XD";
+	}
+
+
+
+	/*
+		for (int i = 0; i < 2 * i_D; i += 2) {
+			for (int j = 0; j < i_F; j++) {
+				if (pdSolution[i_counter] < ppd_xdminmax[i][j] || pdSolution[i_counter] > ppd_xdminmax[i + 1][j]) {
+					sErrorCode = MIN_MAX_ERROR;
+					return false;
+				}
+				i_counter++;
+			}
+		}
+
+		for (int i = 0; i < 2 * i_F; i += 2) {
+			for (int j = 0; j < i_M; j++) {
+				if (pdSolution[i_counter] < ppd_xfminmax[i][j] || pdSolution[i_counter] > ppd_xfminmax[i + 1][j]) {
+					sErrorCode = MIN_MAX_ERROR;
+					return false;
+				}
+				i_counter++;
+			}
+		}
+
+		for (int i = 0; i < 2 * i_M; i += 2) {
+			for (int j = 0; j < i_S; j++) {
+				if (pdSolution[i_counter] < ppd_xmminmax[i][j] || pdSolution[i_counter] > ppd_xmminmax[i + 1][j]) {
+					sErrorCode = MIN_MAX_ERROR;
+					return false;
+				}
+				i_counter++;
+			}
+		}
+
+		return true;
+		*/// TO POZNIEJ
+
 }
 
 
@@ -722,7 +910,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 	double d_total_sum_xm = 0;
 
 	for (int i = 0; i < i_D; i++) {
-		for (int j = 0; j < i_F; j++) {
+		for (int j = 0; j < i_F; j++) {			// po co mi tutaj ten j?
 			if (pdSolution[i_counter] >= 0) {
 				d_current_sum_xd += pdSolution[i_counter];
 				i_counter++;

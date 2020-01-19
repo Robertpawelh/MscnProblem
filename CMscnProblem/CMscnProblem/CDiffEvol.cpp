@@ -142,7 +142,7 @@ void CDiffEvol::v_set_new_quality(CIndividual* pcNewInd, int iParentId) {
 
 void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iParentId, bool &bWasFoundTheBest) {
 	string s_error_code;
-	if (pc_problem->bConstraintsSatisfied( (*pcNewInd).pdGetGenotype(), s_error_code) ) {
+//	if (pc_problem->bConstraintsSatisfied( (*pcNewInd).pdGetGenotype(), s_error_code) ) {
 		
 		if ((*pcNewInd).dGetFitness() >= pc_current_population[iParentId].dGetFitness() ||
 			!pc_problem->bConstraintsSatisfied(pd_current_best, s_error_code)) { 
@@ -165,7 +165,7 @@ void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iPar
 		else {
 			delete pcNewInd;
 		}
-	}
+	//}
 }
 
 void CDiffEvol::vRunIteration() {
