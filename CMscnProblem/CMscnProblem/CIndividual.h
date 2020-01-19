@@ -4,10 +4,10 @@ private:
 	double * pd_genotype;
 	int i_genotype_size;
 	double d_fitness;
+
 public:
 	CIndividual() {};
 	CIndividual(int iGenotypeSize);
-//	CIndividual(CIndividual& cOther);
 	~CIndividual();
 
 	void vSetFitness(double dFitness) {

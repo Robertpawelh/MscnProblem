@@ -4,6 +4,6 @@
 class CRandomSolutionGenerator
 {
 public:
-	static double * pd_random_solution(CRandom &cGenerator, CMscnProblem* pcProblem, double dValuesDivider);
+	static double * pd_random_solution(CRandom &cGenerator, CProblem* pcProblem, double dValuesDivider);
 };
 

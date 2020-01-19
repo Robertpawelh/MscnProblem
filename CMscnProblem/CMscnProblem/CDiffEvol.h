@@ -1,6 +1,8 @@
 #pragma once
 #include "CRandomSolutionGenerator.h"
 #include "CIndividual.h"
+#include "COptimizer.h"
+
 #include <vector>
 
 #define	NUMBER_OF_ITERATIONS 200000
@@ -12,9 +14,8 @@
 
 using namespace std;
 
-class CDiffEvol {
+class CDiffEvol : public COptimizer {
 private:
-	CMscnProblem * pc_problem;
 	CIndividual * pc_current_population;
 	int i_current_pop_size;
 	CRandom c_rand_gen;
@@ -33,7 +34,7 @@ private:
 	void vRunIteration();
 	void v_change_population_size(int iNewSize);
 public:
-	CDiffEvol(CMscnProblem * pcProblem);
+	CDiffEvol(CProblem * pcProblem);
 	~CDiffEvol();
 
 	double* pdFindBestSolution(int iSeed);

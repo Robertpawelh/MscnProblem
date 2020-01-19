@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
-#include <string>
+//#include <string>
 #include <stdio.h>
 #include "CRandom.h"
+#include "CProblem.h"
 
 #define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
 #define DESC_IN_FILE_SIZE 16
@@ -41,7 +42,7 @@
 
 using namespace std;
 
-class CMscnProblem {
+class CMscnProblem : public CProblem {
 private:
 	int i_D;
 	int i_F;
@@ -108,6 +109,8 @@ public:
 	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
+
+	double iGetSolutionArrayLen();
 
 	bool bSaveProblemInstance(string sFileName);
 	bool bSaveSolution(string sFileName, double *pdSolution);

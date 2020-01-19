@@ -1,14 +1,14 @@
-#include "pch.h"
 #include "CRandomSearch.h"
 
-
+/*
 CRandomSearch::CRandomSearch(CMscnProblem *pcProblem) {
 	pc_problem = pcProblem;
 }
+*/
 
 
-CRandomSearch::~CRandomSearch() {
-}
+//CRandomSearch::~CRandomSearch() {
+//}
 
 
 
@@ -16,7 +16,7 @@ double * CRandomSearch::pdFindBestSolution(int iSeed) {
 	CRandom c_generator(iSeed);
 	bool b_is_success;
 	string s_error_code;
-
+	// TU PRZEMYSLEC
 	double* pd_best_solution = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem, STARTING_VALUES_RAND_SEARCH_DIVIDER);
 	double d_best_quality = INT_MIN;
 
@@ -25,7 +25,7 @@ double * CRandomSearch::pdFindBestSolution(int iSeed) {
 	}
 
 	double d_current_quality;
-	double* pd_current_solution;// = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem, STARTING_VALUES_RAND_SEARCH_DIVIDER);
+	double* pd_current_solution = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem, STARTING_VALUES_RAND_SEARCH_DIVIDER);
 
 	for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
 		pd_current_solution = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem, STARTING_VALUES_RAND_SEARCH_DIVIDER);

@@ -85,7 +85,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -155,24 +155,21 @@
     <ClInclude Include="CDiffEvol.h" />
     <ClInclude Include="CIndividual.h" />
     <ClInclude Include="CMscnProblem.h" />
+    <ClInclude Include="COptimizer.h" />
+    <ClInclude Include="CProblem.h" />
     <ClInclude Include="CRandom.h" />
     <ClInclude Include="CRandomSearch.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="CRandomSolutionGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CDiffEvol.cpp" />
     <ClCompile Include="CIndividual.cpp" />
     <ClCompile Include="CMscnProblem.cpp" />
+    <ClCompile Include="COptimizer.cpp" />
+    <ClCompile Include="CProblem.cpp" />
     <ClCompile Include="CRandom.cpp" />
     <ClCompile Include="CRandomSearch.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="CRandomSolutionGenerator.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,5 +1,4 @@
-﻿#include "pch.h"
-#include "CMscnProblem.h"
+﻿#include "CMscnProblem.h"
 
 CMscnProblem::CMscnProblem() {
 	i_D = 1;
@@ -496,6 +495,18 @@ bool CMscnProblem::bSetValInXmminmax(int iRow, int iColumn, double dVal) {
 }
 
 double CMscnProblem::dGetMin(int iId, bool &bIsSuccess) {
+	if (iId >= INDEX_OF_FIRST_DATA_IN_SOLUTION) {
+		iId -= INDEX_OF_FIRST_DATA_IN_SOLUTION;
+	}
+
+	else {
+		bIsSuccess = true;
+		if (iId-- == 0) return i_D;
+		if (iId-- == 0) return i_F;
+		if (iId-- == 0) return i_M;
+		if (iId-- == 0) return i_S;
+	}
+
 	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
 	}
@@ -524,6 +535,17 @@ double CMscnProblem::dGetMin(int iId, bool &bIsSuccess) {
 }
 
 double CMscnProblem::dGetMax(int iId, bool &bIsSuccess) {
+	if (iId >= INDEX_OF_FIRST_DATA_IN_SOLUTION) {
+		iId -= INDEX_OF_FIRST_DATA_IN_SOLUTION;
+	}
+
+	else {
+		bIsSuccess = true;
+		if (iId-- == 0) return i_D;
+		if (iId-- == 0) return i_F;
+		if (iId-- == 0) return i_M;
+		if (iId-- == 0) return i_S;
+	}
 
 	if (iId >= i_D * i_F) {
 		iId -= i_D * i_F;
@@ -652,12 +674,25 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		bIsSuccess = false;
 	}
 
-	if (pdSolution[0] != i_D ||
-		pdSolution[1] != i_F ||
-		pdSolution[2] != i_M ||
-		pdSolution[3] != i_S) {
+	if (pdSolution[0] != i_D) {
+		pdSolution[0] = i_D;
+		bIsSuccess = false;
+	} 
+	if (pdSolution[1] != i_F) {
+		pdSolution[1] = i_F;
 		bIsSuccess = false;
 	}
+	if (pdSolution[2] != i_M) {
+		pdSolution[2] = i_M;
+		bIsSuccess = false;
+	}
+	if (pdSolution[3] != i_S) {
+		pdSolution[3] = i_S;
+		bIsSuccess = false;
+	}
+		
+	//	bIsSuccess = false;
+	//}
 
 	return dCalculateProfit(pdSolution, bIsSuccess);
 }
@@ -801,6 +836,10 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 	}
 
 	return true;
+}
+
+double CMscnProblem::iGetSolutionArrayLen() {
+	return INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i_M * i_S;
 }
 
 bool CMscnProblem::bSaveProblemInstance(string sFileName) {
