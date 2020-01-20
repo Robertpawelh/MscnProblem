@@ -10,9 +10,10 @@ protected:
 public:
 	
 	virtual ~COptimizer() {
+		delete pd_current_best;
 	}
 
-	virtual double* pdGetCurrentBest() {		//czy musi byc wirtualna?
+	double* pdGetCurrentBest() {
 		return pd_current_best;
 	};
 

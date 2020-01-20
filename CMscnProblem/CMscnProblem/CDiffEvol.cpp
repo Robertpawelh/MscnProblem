@@ -4,20 +4,23 @@
 CDiffEvol::CDiffEvol(CProblem *pcProblem, int iSeed) {
 	pc_problem = pcProblem;
 	i_iterations_counter = 0;
-	c_rand_gen = CRandom (iSeed);
-	i_genotype_size = pc_problem->iGetSolutionArrayLen();
+	c_rand_gen = CRandom(iSeed);
 }
 
 
 CDiffEvol::~CDiffEvol() {
-	delete [] pc_current_population;
+	delete[] pc_current_population;
 }
 
 void CDiffEvol::vInitialize() {
 	bool b_is_success;
 	string s_error_code;
 
+	i_genotype_size = pc_problem->iGetSolutionArrayLen();
 	d_best_quality = INT_MIN;
+	if (pc_current_population != NULL) {
+		delete[]pc_current_population;
+	}
 	pc_current_population = new CIndividual[POPULATION_SIZE];
 	i_current_pop_size = POPULATION_SIZE;
 
@@ -27,16 +30,18 @@ void CDiffEvol::vInitialize() {
 		pc_current_population[i].vSetFitness((*pc_problem).dGetQuality(pc_current_population[i].pdGetGenotype(), b_is_success));
 	};
 
+	if (pd_current_best != NULL) {
+		delete[] pd_current_best;
+	}
 	pd_current_best = new double[i_genotype_size];
 
-//	if (pc_problem->bConstraintsSatisfied(pd_current_best, s_error_code)) {
-//		d_best_quality = pc_problem->dGetQuality(pd_current_best, b_is_success);
-//	}
 }
-
+/*
 bool CDiffEvol::bCheckStopCondition() {
 	return i_iterations_counter < NUMBER_OF_ITERATIONS;
 }
+*/
+
 /*
 double * CDiffEvol::pdFindBestSolution(int iSeed) {
 	vInitialize(iSeed);
@@ -62,11 +67,11 @@ bool CDiffEvol::bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2,
 	bool b_are_13_the_same = true;
 	bool b_are_14_the_same = true;
 	bool b_are_24_the_same = true;
-	int i = INDEX_OF_FIRST_DATA_IN_SOLUTION;
-	while ((b_are_12_the_same || b_are_13_the_same || 
-		   b_are_14_the_same || b_are_23_the_same || 
-		   b_are_24_the_same || b_are_34_the_same) &&
-		   i < i_genotype_size) {
+	int i = 0;
+	while ((b_are_12_the_same || b_are_13_the_same ||
+		b_are_14_the_same || b_are_23_the_same ||
+		b_are_24_the_same || b_are_34_the_same) &&
+		i < i_genotype_size) {
 
 		if (b_are_12_the_same) {
 			b_are_12_the_same = (cInd1->dGetGeneAtIndex(i) == cInd2->dGetGeneAtIndex(i));
@@ -89,7 +94,6 @@ bool CDiffEvol::bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2,
 		i++;
 	}
 	if (b_are_12_the_same || b_are_13_the_same || b_are_14_the_same || b_are_23_the_same || b_are_24_the_same || b_are_34_the_same) {
-	//	cout << "XD";
 		return false;
 	}
 	else {
@@ -126,13 +130,7 @@ void CDiffEvol::v_crossover(CIndividual* pcNewInd, CIndividual** ppcIndBase, CIn
 	double d_min_val = pc_problem->dGetMin(iGeneOffset, b_is_success);
 	double d_max_val = pc_problem->dGetMax(iGeneOffset, b_is_success);
 
-	if (dNewGene > d_min_val && dNewGene < d_min_val) {
-		(*pcNewInd).vSetGeneAtIndex(iGeneOffset, dNewGene);
-	}
-	else {
-		(*pcNewInd).vSetGeneAtIndex(iGeneOffset, (**ppcIndBase).dGetGeneAtIndex(iGeneOffset));
-		//naprawa powinna byc mocniejsza
-	}
+	(*pcNewInd).vSetGeneAtIndex(iGeneOffset, dNewGene);
 }
 
 void CDiffEvol::v_set_new_quality(CIndividual* pcNewInd, int iParentId) {
@@ -141,36 +139,29 @@ void CDiffEvol::v_set_new_quality(CIndividual* pcNewInd, int iParentId) {
 	i_iterations_counter++;
 }
 
-void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iParentId, bool &bWasFoundTheBest) {
+void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iParentId) {
 	string s_error_code;
-//	if (pc_problem->bConstraintsSatisfied( (*pcNewInd).pdGetGenotype(), s_error_code) ) {
-		
-		if ((*pcNewInd).dGetFitness() >= pc_current_population[iParentId].dGetFitness() ||
-			!pc_problem->bConstraintsSatisfied(pd_current_best, s_error_code)) { 
 
-			pc_current_population[iParentId] = *pcNewInd;
+	if ((*pcNewInd).dGetFitness() >= pc_current_population[iParentId].dGetFitness()) {
+		pc_current_population[iParentId] = *pcNewInd;
 
-			if ((*pcNewInd).dGetFitness() > d_best_quality) {
-				for (int i = 0; i < i_genotype_size; i++) {
-					pd_current_best[i] = pc_current_population[iParentId].dGetGeneAtIndex(i);
-				}
-
-				d_best_quality = (*pcNewInd).dGetFitness();
-				cout << d_best_quality << endl; // wyswietla kolejno znalezione najlepsze rozwiazania.
-				bWasFoundTheBest = true;	// to wywal
+		if ((*pcNewInd).dGetFitness() > d_best_quality) {
+			for (int i = 0; i < i_genotype_size; i++) {
+				pd_current_best[i] = pc_current_population[iParentId].dGetGeneAtIndex(i);
 			}
-			else {
-				bWasFoundTheBest = false;	// to wywal
-			}
+
+			d_best_quality = (*pcNewInd).dGetFitness();
+			cout << d_best_quality << endl; // wyswietla kolejno znalezione najlepsze rozwiazania.
 		}
 		else {
-			delete pcNewInd;
 		}
-	//}
+	}
+	else {
+		delete pcNewInd;
+	}
 }
 
 void CDiffEvol::vRunIteration() {
-	bool b_was_found_the_best;
 	for (int i = 0; i < i_current_pop_size; i++) {
 		CIndividual* pc_ind_base = nullptr;
 		CIndividual* pc_ind_add1 = nullptr;
@@ -179,11 +170,8 @@ void CDiffEvol::vRunIteration() {
 
 		if (bAreIndividualsDifferent(&pc_current_population[i], pc_ind_base, pc_ind_add1, pc_ind_add2)) {
 			CIndividual* c_element_new = new CIndividual(i_genotype_size);
-		//	c_element_new->vSetGeneAtIndex(0, pc_problem->iGetD());
-		//	c_element_new->vSetGeneAtIndex(1, pc_problem->iGetF());
-		//	c_element_new->vSetGeneAtIndex(2, pc_problem->iGetM());
-		//	c_element_new->vSetGeneAtIndex(3, pc_problem->iGetS());
-			for (int i_gene_offset = 0; i_gene_offset < i_genotype_size; i_gene_offset++) { // i_gen_offset byl INDEXOFFIRSTDATA
+
+			for (int i_gene_offset = 0; i_gene_offset < i_genotype_size; i_gene_offset++) {
 				if (c_rand_gen.d_random(0, 1) < CROSS_PROBABILITY) {
 					v_crossover(c_element_new, &pc_ind_base, &pc_ind_add1, &pc_ind_add2, i_gene_offset);
 				}
@@ -192,8 +180,8 @@ void CDiffEvol::vRunIteration() {
 				}
 			}
 
-			v_set_new_quality(c_element_new, i); 
-			v_replace_ind_if_child_is_better(c_element_new, i, b_was_found_the_best);
+			v_set_new_quality(c_element_new, i);
+			v_replace_ind_if_child_is_better(c_element_new, i);
 
 		}
 		else {
@@ -208,19 +196,17 @@ void CDiffEvol::v_change_population_size(int iNewSize) {
 		return;
 	}
 
-	if (iNewSize < i_current_pop_size) { // zmniejszamy
+	if (iNewSize < i_current_pop_size) {
 		for (int i = 0; i < iNewSize; i++) {
 			pc_new_population[i] = pc_current_population[i];
-			//pc_new_population[i] = CIndividual(pc_current_population[i]);
 		}
 	}
-	else {		// zwiekszamy
+	else {
 		for (int i = 0; i < i_current_pop_size; i++) {
 			pc_new_population[i] = pc_current_population[i];
 		}
 		for (int i = i_current_pop_size; i < iNewSize; i++) {
-		//	RAND GEN
-				pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem, STARTING_VALUES_DIVIDER));
+			pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem, STARTING_VALUES_DIVIDER));
 		}
 
 	}

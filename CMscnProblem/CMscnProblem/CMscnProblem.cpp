@@ -691,11 +691,11 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		bIsSuccess = false;
 	}
 
-	string xD = "";
-	//vPrintSolution(pdSolution);
-//	cout << endl << endl;
+	//	string xD = "";
+	//	if (!bConstraintsSatisfied(pdSolution, xD)) vPrintSolution(pdSolution);
+	//	cout << endl << endl;
 	vRepairBadSolution(pdSolution);
-//	vPrintSolution(pdSolution);
+	//vPrintSolution(pdSolution);
 //	cout << endl <<	bConstraintsSatisfied(pdSolution, xD);
 //	cout << xD << endl;
 	return dCalculateProfit(pdSolution, bIsSuccess);
@@ -861,6 +861,10 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 
 			for (int j = 0; j < i_F; j++) {		// zwieksza
 				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F;
+				if (pdSolution[i_counter] == 0) {
+					pdSolution[i_counter] = (dGetMax(i_counter, b_is_success) - dGetMin(i_counter, b_is_success)) / 2;
+				}
+
 				if (pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
 					d_sum_from_f_to_m += pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
 					pdSolution[i_counter] *= INCREASE_PARAMETER;
@@ -877,7 +881,7 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 				for (int j = 0; j < i_S; j++) {
 					i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i * i_S + j;
 					if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
-						d_sum_from_m_to_s -= pdSolution[i_counter] * (1-REDUCTION_PARAMETER);
+						d_sum_from_m_to_s -= pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
 						pdSolution[i_counter] *= REDUCTION_PARAMETER;
 						i_counter++;
 					}
@@ -905,9 +909,12 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 		}
 
 		while (d_sum_from_d_to_f < d_sum_from_f_to_m) {
-	//		cout << d_sum_from_d_to_f << "   " << d_sum_from_f_to_m << endl;
+			//		cout << d_sum_from_d_to_f << "   " << d_sum_from_f_to_m << endl;
 			for (int j = 0; j < i_D; j++) {
 				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F;
+				if (pdSolution[i_counter] == 0) {
+					pdSolution[i_counter] = (dGetMax(i_counter, b_is_success) - dGetMin(i_counter, b_is_success)) / 2;
+				}
 				if (pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
 					d_sum_from_d_to_f += pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
 					pdSolution[i_counter] *= INCREASE_PARAMETER;
