@@ -3,7 +3,7 @@
 #include <time.h>
 #include <windows.h>
 
-#define MAX_TIME 3
+#define MAX_TIME 55
 
 class CTimer {
 public:

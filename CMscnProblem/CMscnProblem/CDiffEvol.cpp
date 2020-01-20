@@ -63,10 +63,11 @@ bool CDiffEvol::bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2,
 	bool b_are_14_the_same = true;
 	bool b_are_24_the_same = true;
 	int i = INDEX_OF_FIRST_DATA_IN_SOLUTION;
-	while (b_are_12_the_same || b_are_13_the_same || 
+	while ((b_are_12_the_same || b_are_13_the_same || 
 		   b_are_14_the_same || b_are_23_the_same || 
-		   b_are_24_the_same || b_are_34_the_same || 
+		   b_are_24_the_same || b_are_34_the_same) &&
 		   i < i_genotype_size) {
+
 		if (b_are_12_the_same) {
 			b_are_12_the_same = (cInd1->dGetGeneAtIndex(i) == cInd2->dGetGeneAtIndex(i));
 		}

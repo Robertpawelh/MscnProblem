@@ -691,204 +691,212 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		bIsSuccess = false;
 	}
 
-	//vRepairBadSolution(pdSolution);
-	string str = "";
-	if (bConstraintsSatisfied(pdSolution, str)) {
-		return dCalculateProfit(pdSolution, bIsSuccess);
-	}
-	else {
-		return -1111111;
-	}
+	string xD = "";
+	vRepairBadSolution(&pdSolution);
+	bConstraintsSatisfied(pdSolution, xD);
+	cout << xD << endl;
+	return dCalculateProfit(pdSolution, bIsSuccess);
 }
 
-void CMscnProblem::vRepairBadSolution(double * pdSolution) {
+void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 	bool b_is_success;
 	double d_current_sum_xd = 0;
 	double d_current_sum_xf = 0;
 	double d_current_sum_xm = 0;
-	double d_total_sum_xd = 0;
-	double d_total_sum_xf = 0;
+	double d_sum_from_d_to_f = 0;
+	double d_sum_from_f_to_m = 0;
 	double d_total_sum_xm = 0;
 
 	int i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION;
 
+	double d_sum_from_m_to_s = 0;
+
 	for (int i = 0; i < i_D; i++) {
+
 		for (int j = 0; j < i_F; j++) {
-			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xd += pdSolution[i_counter];
+			if (*pdSolution[i_counter] >= 0) {
+				d_current_sum_xd += *pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xd += pdSolution[i_counter];
+				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xd += *pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
-	/*	while (d_current_sum_xd > pd_sd[i]) {
+		while (d_current_sum_xd > pd_sd[i]) {
 			i_counter -= i_F;		// cofamy o iteracje F
-			double d_subtrahend = (d_current_sum_xd - pd_sd[i]) / (i_F - 1);
 
 			for (int j = 0; j < i_F; j++) {
-				if (pdSolution[i_counter] - d_subtrahend > dGetMin(i_counter, b_is_success)) {
-					pdSolution[i_counter] -= d_subtrahend;
-					d_current_sum_xd -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xd -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
+					i_counter++;
 				}
 				else {
-					d_current_sum_xd -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xd -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
 		}
-*/
-		d_total_sum_xd += d_current_sum_xd;
+
+		//d_total_sum_xd += d_current_sum_xd;
 		d_current_sum_xd = 0;
 	}
 
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xf += pdSolution[i_counter];
+			if (*pdSolution[i_counter] >= 0) {
+				d_current_sum_xf += *pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xf += pdSolution[i_counter];
+				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xf += *pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
-		/*
 		while (d_current_sum_xf > pd_sf[i]) {
 			i_counter -= i_M;		// cofamy o iteracje F
-			double d_subtrahend = (d_current_sum_xf - pd_sf[i]) / (i_M - 1);
 
 			for (int j = 0; j < i_M; j++) {
-				if (pdSolution[i_counter] - d_subtrahend >= dGetMin(i_counter, b_is_success)) {
-					pdSolution[i_counter] -= d_subtrahend;
-					d_current_sum_xf -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xf -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_current_sum_xf -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xf -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
 		}
-		*/
-		d_total_sum_xf += d_current_sum_xf;
+
+		//d_total_sum_xf += d_current_sum_xf;
 		d_current_sum_xf = 0;
 	}
 
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xm += pdSolution[i_counter];
+			if (*pdSolution[i_counter] >= 0) {
+				d_current_sum_xm += *pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xm += pdSolution[i_counter];
+				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xm += *pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
-		/*
 		while (d_current_sum_xm > pd_sm[i]) {
 			i_counter -= i_S;		// cofamy o iteracje F
-			double d_subtrahend = (d_current_sum_xm - pd_sm[i]) / i_S;
 
 			for (int j = 0; j < i_S; j++) {
-				if (pdSolution[i_counter] - d_subtrahend >= dGetMin(i_counter, b_is_success)) {
-					pdSolution[i_counter] -= d_subtrahend;
-					d_current_sum_xm -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xm -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_current_sum_xm -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xm -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
 		}
-		*/
-		d_total_sum_xm += d_current_sum_xm;
+
+		//d_total_sum_xm += d_current_sum_xm;
 		d_current_sum_xm = 0;
 	}
-
 
 	d_current_sum_xm = 0;
 	i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M;
 
 	for (int i = 0; i < i_S; i++) {
 		for (int j = 0; j < i_M; j++) {
-			d_current_sum_xm += pdSolution[i_counter + i_M * j];
+			d_current_sum_xm += *pdSolution[i_counter + i_M * j];
 		}
 
-		/*
+
 		while (d_current_sum_xm > pd_ss[i]) {
 			//	i_counter -= -i_M;		// cofamy o iteracje F
-			double d_subtrahend = (d_current_sum_xm - pd_ss[i]) / (i_M-1);
 
 			for (int j = 0; j < i_M; j++) {
-				if (pdSolution[i_counter + i_M * j] - d_subtrahend > dGetMin(i_counter + i_M * j, b_is_success)) {
-					pdSolution[i_counter + i_M * j] -= d_subtrahend;
-					d_current_sum_xm -= d_subtrahend;		//czy to sie nie infinity loopuje?
+				if (*pdSolution[i_counter + i_M * j] * REDUCTION_PARAMETER > dGetMin(i_counter + i_M * j, b_is_success)) {
+					d_current_sum_xm -= *pdSolution[i_counter + i_M * j] * (1 - REDUCTION_PARAMETER);
+					*pdSolution[i_counter + i_M * j] *= REDUCTION_PARAMETER;
 				}
 				else {
-					d_current_sum_xm -= (pdSolution[i_counter + i_M * j] - dGetMin(i_counter + i_M * j, b_is_success));
-					pdSolution[i_counter + i_M * j] = dGetMin(i_counter + i_M * j, b_is_success);
+					d_current_sum_xm -= (*pdSolution[i_counter + i_M * j] - dGetMin(i_counter + i_M * j, b_is_success));
+					*pdSolution[i_counter + i_M * j] = dGetMin(i_counter + i_M * j, b_is_success);
 				}
 
 			}
 		}
-		*/
+
 		d_current_sum_xm = 0;
 		i_counter++;
 	}
 
-	if (d_total_sum_xd < d_total_sum_xf || d_total_sum_xf < d_total_sum_xm) {
-	//	cout << "XD";
+	for (int i = 0; i < i_M; i++) {
+		for (int j = 0; j < i_F; j++) {
+			d_sum_from_f_to_m += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F];
+		}
+
+		for (int j = 0; j < i_S; j++) {
+			d_sum_from_m_to_s += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i * i_M + j];
+		}
+
+		while (d_sum_from_f_to_m < d_sum_from_m_to_s) {
+			for (int j = 0; j < i_F; j++) {
+				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F;
+				if (*pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
+					d_sum_from_f_to_m += *pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
+					*pdSolution[i_counter] *= INCREASE_PARAMETER;
+					i_counter++;
+				}
+				else {
+					d_sum_from_f_to_m += (dGetMax(i_counter, b_is_success) - *pdSolution[i_counter]);
+					*pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
+					i_counter++;
+				}
+			}
+		}
 	}
 
+	d_sum_from_f_to_m = 0;
 
-
-	/*
-		for (int i = 0; i < 2 * i_D; i += 2) {
-			for (int j = 0; j < i_F; j++) {
-				if (pdSolution[i_counter] < ppd_xdminmax[i][j] || pdSolution[i_counter] > ppd_xdminmax[i + 1][j]) {
-					sErrorCode = MIN_MAX_ERROR;
-					return false;
-				}
-				i_counter++;
-			}
+	for (int i = 0; i < i_F; i++) {
+		for (int j = 0; j < i_D; j++) {
+			d_sum_from_d_to_f += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F];
 		}
 
-		for (int i = 0; i < 2 * i_F; i += 2) {
-			for (int j = 0; j < i_M; j++) {
-				if (pdSolution[i_counter] < ppd_xfminmax[i][j] || pdSolution[i_counter] > ppd_xfminmax[i + 1][j]) {
-					sErrorCode = MIN_MAX_ERROR;
-					return false;
-				}
-				i_counter++;
-			}
+		for (int j = 0; j < i_M; j++) {
+			d_sum_from_f_to_m += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i * i_M + j];
 		}
 
-		for (int i = 0; i < 2 * i_M; i += 2) {
-			for (int j = 0; j < i_S; j++) {
-				if (pdSolution[i_counter] < ppd_xmminmax[i][j] || pdSolution[i_counter] > ppd_xmminmax[i + 1][j]) {
-					sErrorCode = MIN_MAX_ERROR;
-					return false;
+		while (d_sum_from_d_to_f < d_sum_from_f_to_m) {
+	//		cout << d_sum_from_d_to_f << "   " << d_sum_from_f_to_m << endl;
+			for (int j = 0; j < i_D; j++) {
+				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F;
+				if (*pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
+					d_sum_from_d_to_f += *pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
+					*pdSolution[i_counter] *= INCREASE_PARAMETER;
+					i_counter++;
 				}
-				i_counter++;
+				else {
+					d_sum_from_d_to_f += (dGetMax(i_counter, b_is_success) - *pdSolution[i_counter]);
+					*pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
+					i_counter++;
+				}
 			}
 		}
-
-		return true;
-		*/// TO POZNIEJ
-
+	}
 }
 
 

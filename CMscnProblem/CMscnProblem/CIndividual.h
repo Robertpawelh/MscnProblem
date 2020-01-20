@@ -1,4 +1,5 @@
 #pragma once
+
 class CIndividual {
 private:
 	double * pd_genotype;

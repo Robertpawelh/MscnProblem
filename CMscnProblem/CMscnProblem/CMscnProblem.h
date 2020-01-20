@@ -4,6 +4,9 @@
 #include "CRandom.h"
 #include "CProblem.h"
 
+#define REDUCTION_PARAMETER 0.9
+#define INCREASE_PARAMETER 1.1
+
 #define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
 #define DESC_IN_FILE_SIZE 16
 #define NULL_ERROR "pdSolution is NULL"
@@ -107,7 +110,7 @@ public:
 	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
 	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
-	void vRepairBadSolution(double * pdSolution);
+	void vRepairBadSolution(double ** pdSolution);
 	
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
 
