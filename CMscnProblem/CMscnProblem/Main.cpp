@@ -9,14 +9,14 @@ int main() {
 
 	CMscnProblem *pc_mscn_problem_object = new CMscnProblem();
 	pc_mscn_problem_object->bReadProblemInstance("test_2.txt");
-	double* pd_solution = pc_mscn_problem_object->pdReadSolution("solution.txt");
+//	double* pd_solution = pc_mscn_problem_object->pdReadSolution("solution.txt");
 	//cout << pc_mscn_problem_object->bConstraintsSatisfied(pd_solution, s_error_code) << endl;
-	cout << pc_mscn_problem_object->dGetQuality(pd_solution, b_is_success) << endl;
-//	pc_mscn_problem_object->bSetD(3);
-//	pc_mscn_problem_object->bSetF(3);
-	//pc_mscn_problem_object->bSetM(2);
-//	pc_mscn_problem_object->bSetS(3);
-//	pc_mscn_problem_object->vGenerateInstance(1);
+//	cout << pc_mscn_problem_object->dGetQuality(pd_solution, b_is_success) << endl;
+	pc_mscn_problem_object->bSetD(3);
+	pc_mscn_problem_object->bSetF(3);
+	pc_mscn_problem_object->bSetM(2);
+	pc_mscn_problem_object->bSetS(3);
+	pc_mscn_problem_object->vGenerateInstance(1);
 	//	pc_problem_object->vPrintInstance();
 
 	CProblem *pc_problem_object = pc_mscn_problem_object;

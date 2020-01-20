@@ -692,13 +692,16 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 	}
 
 	string xD = "";
-	vRepairBadSolution(&pdSolution);
-	bConstraintsSatisfied(pdSolution, xD);
-	cout << xD << endl;
+	//vPrintSolution(pdSolution);
+//	cout << endl << endl;
+	vRepairBadSolution(pdSolution);
+//	vPrintSolution(pdSolution);
+//	cout << endl <<	bConstraintsSatisfied(pdSolution, xD);
+//	cout << xD << endl;
 	return dCalculateProfit(pdSolution, bIsSuccess);
 }
 
-void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
+void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 	bool b_is_success;
 	double d_current_sum_xd = 0;
 	double d_current_sum_xf = 0;
@@ -714,13 +717,13 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 	for (int i = 0; i < i_D; i++) {
 
 		for (int j = 0; j < i_F; j++) {
-			if (*pdSolution[i_counter] >= 0) {
-				d_current_sum_xd += *pdSolution[i_counter];
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xd += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xd += *pdSolution[i_counter];
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xd += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
@@ -729,14 +732,14 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 			i_counter -= i_F;		// cofamy o iteracje F
 
 			for (int j = 0; j < i_F; j++) {
-				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
-					d_current_sum_xd -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
-					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
+				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xd -= pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					pdSolution[i_counter] *= REDUCTION_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_current_sum_xd -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xd -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
@@ -748,13 +751,13 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_M; j++) {
-			if (*pdSolution[i_counter] >= 0) {
-				d_current_sum_xf += *pdSolution[i_counter];
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xf += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xf += *pdSolution[i_counter];
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xf += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
@@ -763,14 +766,14 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 			i_counter -= i_M;		// cofamy o iteracje F
 
 			for (int j = 0; j < i_M; j++) {
-				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
-					d_current_sum_xf -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
-					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
+				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xf -= pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					pdSolution[i_counter] *= REDUCTION_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_current_sum_xf -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xf -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
@@ -782,13 +785,13 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_S; j++) {
-			if (*pdSolution[i_counter] >= 0) {
-				d_current_sum_xm += *pdSolution[i_counter];
+			if (pdSolution[i_counter] >= 0) {
+				d_current_sum_xm += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
-				*pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
-				d_current_sum_xm += *pdSolution[i_counter];
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				d_current_sum_xm += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
@@ -797,14 +800,14 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 			i_counter -= i_S;		// cofamy o iteracje F
 
 			for (int j = 0; j < i_S; j++) {
-				if (*pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
-					d_current_sum_xm -= *pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
-					*pdSolution[i_counter] *= REDUCTION_PARAMETER;
+				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+					d_current_sum_xm -= pdSolution[i_counter] * (1 - REDUCTION_PARAMETER);
+					pdSolution[i_counter] *= REDUCTION_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_current_sum_xm -= (*pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
-					*pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+					d_current_sum_xm -= (pdSolution[i_counter] - dGetMin(i_counter, b_is_success));
+					pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
@@ -819,7 +822,7 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 
 	for (int i = 0; i < i_S; i++) {
 		for (int j = 0; j < i_M; j++) {
-			d_current_sum_xm += *pdSolution[i_counter + i_M * j];
+			d_current_sum_xm += pdSolution[i_counter + i_M * j];
 		}
 
 
@@ -827,13 +830,13 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 			//	i_counter -= -i_M;		// cofamy o iteracje F
 
 			for (int j = 0; j < i_M; j++) {
-				if (*pdSolution[i_counter + i_M * j] * REDUCTION_PARAMETER > dGetMin(i_counter + i_M * j, b_is_success)) {
-					d_current_sum_xm -= *pdSolution[i_counter + i_M * j] * (1 - REDUCTION_PARAMETER);
-					*pdSolution[i_counter + i_M * j] *= REDUCTION_PARAMETER;
+				if (pdSolution[i_counter + i_M * j] * REDUCTION_PARAMETER > dGetMin(i_counter + i_M * j, b_is_success)) {
+					d_current_sum_xm -= pdSolution[i_counter + i_M * j] * (1 - REDUCTION_PARAMETER);
+					pdSolution[i_counter + i_M * j] *= REDUCTION_PARAMETER;
 				}
 				else {
-					d_current_sum_xm -= (*pdSolution[i_counter + i_M * j] - dGetMin(i_counter + i_M * j, b_is_success));
-					*pdSolution[i_counter + i_M * j] = dGetMin(i_counter + i_M * j, b_is_success);
+					d_current_sum_xm -= (pdSolution[i_counter + i_M * j] - dGetMin(i_counter + i_M * j, b_is_success));
+					pdSolution[i_counter + i_M * j] = dGetMin(i_counter + i_M * j, b_is_success);
 				}
 
 			}
@@ -843,59 +846,82 @@ void CMscnProblem::vRepairBadSolution(double ** pdSolution) {
 		i_counter++;
 	}
 
+	//vPrintSolution(pdSolution);
+
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_F; j++) {
-			d_sum_from_f_to_m += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F];
+			d_sum_from_f_to_m += pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F];
 		}
 
 		for (int j = 0; j < i_S; j++) {
-			d_sum_from_m_to_s += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i * i_M + j];
+			d_sum_from_m_to_s += pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i * i_S + j];
 		}
 
 		while (d_sum_from_f_to_m < d_sum_from_m_to_s) {
-			for (int j = 0; j < i_F; j++) {
+
+			for (int j = 0; j < i_F; j++) {		// zwieksza
 				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i + j * i_F;
-				if (*pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
-					d_sum_from_f_to_m += *pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
-					*pdSolution[i_counter] *= INCREASE_PARAMETER;
+				if (pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
+					d_sum_from_f_to_m += pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
+					pdSolution[i_counter] *= INCREASE_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_sum_from_f_to_m += (dGetMax(i_counter, b_is_success) - *pdSolution[i_counter]);
-					*pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
+					d_sum_from_f_to_m += (dGetMax(i_counter, b_is_success) - pdSolution[i_counter]);
+					pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
-		}
-	}
 
-	d_sum_from_f_to_m = 0;
+			if (d_sum_from_f_to_m < d_sum_from_m_to_s) {	//zmniejsza
+				for (int j = 0; j < i_S; j++) {
+					i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i_F * i_M + i * i_S + j;
+					if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
+						d_sum_from_m_to_s -= pdSolution[i_counter] * (1-REDUCTION_PARAMETER);
+						pdSolution[i_counter] *= REDUCTION_PARAMETER;
+						i_counter++;
+					}
+					else {
+						d_sum_from_m_to_s -= pdSolution[i_counter] - dGetMin(i_counter, b_is_success);
+						pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
+						i_counter++;
+					}
+				}
+			}
+
+
+		}
+		d_sum_from_f_to_m = 0;
+		d_sum_from_m_to_s = 0;
+	}
 
 	for (int i = 0; i < i_F; i++) {
 		for (int j = 0; j < i_D; j++) {
-			d_sum_from_d_to_f += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F];
+			d_sum_from_d_to_f += pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F];
 		}
 
 		for (int j = 0; j < i_M; j++) {
-			d_sum_from_f_to_m += *pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i * i_M + j];
+			d_sum_from_f_to_m += pdSolution[INDEX_OF_FIRST_DATA_IN_SOLUTION + i_D * i_F + i * i_M + j];
 		}
 
 		while (d_sum_from_d_to_f < d_sum_from_f_to_m) {
 	//		cout << d_sum_from_d_to_f << "   " << d_sum_from_f_to_m << endl;
 			for (int j = 0; j < i_D; j++) {
 				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F;
-				if (*pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
-					d_sum_from_d_to_f += *pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
-					*pdSolution[i_counter] *= INCREASE_PARAMETER;
+				if (pdSolution[i_counter] * INCREASE_PARAMETER < dGetMax(i_counter, b_is_success)) {
+					d_sum_from_d_to_f += pdSolution[i_counter] * (INCREASE_PARAMETER - 1);
+					pdSolution[i_counter] *= INCREASE_PARAMETER;
 					i_counter++;
 				}
 				else {
-					d_sum_from_d_to_f += (dGetMax(i_counter, b_is_success) - *pdSolution[i_counter]);
-					*pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
+					d_sum_from_d_to_f += (dGetMax(i_counter, b_is_success) - pdSolution[i_counter]);
+					pdSolution[i_counter] = dGetMax(i_counter, b_is_success);
 					i_counter++;
 				}
 			}
 		}
+		d_sum_from_d_to_f = 0;
+		d_sum_from_f_to_m = 0;
 	}
 }
 
