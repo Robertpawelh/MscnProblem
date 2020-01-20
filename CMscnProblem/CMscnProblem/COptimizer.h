@@ -10,7 +10,7 @@ protected:
 public:
 	
 	virtual ~COptimizer() {
-		delete pd_current_best;
+		delete [] pd_current_best;
 	}
 
 	double* pdGetCurrentBest() {

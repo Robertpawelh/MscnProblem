@@ -50,7 +50,7 @@ int main() {
 	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
 	
 
-	cout << "Inny test" << endl;
+	cout << "\n\nInny test" << endl;
 
 	pc_mscn_problem_object->bSetD(15);
 	pc_mscn_problem_object->bSetF(15);
@@ -69,7 +69,7 @@ int main() {
 		pd_best_found_solution = pc_optimizer->pdGetCurrentBest();
 		c_timer.vSetTimePassed(&d_time_passed);
 	}
-	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
+	//pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
 	cout << "\nDiffEvolution:\n";
 	d_time_passed = 0;
 	c_timer.vSetStartNow();
@@ -81,9 +81,19 @@ int main() {
 		pd_best_found_solution = pc_optimizer->pdGetCurrentBest();
 		c_timer.vSetTimePassed(&d_time_passed);
 	}
-	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
+	//pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
 
 	delete pc_mscn_problem_object;
 	delete pc_rand_search;
 	delete pc_diff_evol;
 }
+
+/*
+Zastanow sie, czy klasa metody powinna brac wskaznik na
+obiekt konkretnego problemu (np. CMscnProblem), czy raczej na klase wirtualna
+CProblem
+
+Powinna ona brac wskaznik na klase wirtualna, gdyz zastosowane algorytmy sa niezalezne od problemu, tzn. dobrze zaimplementowane
+powinny dzialac dla kazdego problemu kodowanego przez ciag liczb rzeczywistych. Posiadanie wskaznika na klase wirtualna zwiekszy
+wiec uniwersalnosc naszej klasy optimizer
+*/

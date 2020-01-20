@@ -691,17 +691,11 @@ double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 		bIsSuccess = false;
 	}
 
-	//	string xD = "";
-	//	if (!bConstraintsSatisfied(pdSolution, xD)) vPrintSolution(pdSolution);
-	//	cout << endl << endl;
-	vRepairBadSolution(pdSolution);
-	//vPrintSolution(pdSolution);
-//	cout << endl <<	bConstraintsSatisfied(pdSolution, xD);
-//	cout << xD << endl;
+	vRepairIncorrectSolution(pdSolution);
 	return dCalculateProfit(pdSolution, bIsSuccess);
 }
 
-void CMscnProblem::vRepairBadSolution(double * pdSolution) {
+void CMscnProblem::vRepairIncorrectSolution(double * pdSolution) {
 	bool b_is_success;
 	double d_current_sum_xd = 0;
 	double d_current_sum_xf = 0;
@@ -722,14 +716,14 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 				d_current_sum_xd += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
 		while (d_current_sum_xd > pd_sd[i]) {
-			i_counter -= i_F;		// cofamy o iteracje F
+			i_counter -= i_F;	
 
 			for (int j = 0; j < i_F; j++) {
 				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
@@ -745,7 +739,6 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 			}
 		}
 
-		//d_total_sum_xd += d_current_sum_xd;
 		d_current_sum_xd = 0;
 	}
 
@@ -756,14 +749,14 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 				d_current_sum_xf += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
 		while (d_current_sum_xf > pd_sf[i]) {
-			i_counter -= i_M;		// cofamy o iteracje F
+			i_counter -= i_M;
 
 			for (int j = 0; j < i_M; j++) {
 				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
@@ -779,7 +772,6 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 			}
 		}
 
-		//d_total_sum_xf += d_current_sum_xf;
 		d_current_sum_xf = 0;
 	}
 
@@ -790,14 +782,14 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 				i_counter++;
 			}
 			else {
-				pdSolution[i_counter] = dGetMin(i_counter, b_is_success); //sprawdz czy zmienia
+				pdSolution[i_counter] = dGetMin(i_counter, b_is_success);
 				d_current_sum_xm += pdSolution[i_counter];
 				i_counter++;
 			}
 		}
 
 		while (d_current_sum_xm > pd_sm[i]) {
-			i_counter -= i_S;		// cofamy o iteracje F
+			i_counter -= i_S;
 
 			for (int j = 0; j < i_S; j++) {
 				if (pdSolution[i_counter] * REDUCTION_PARAMETER > dGetMin(i_counter, b_is_success)) {
@@ -813,7 +805,6 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 			}
 		}
 
-		//d_total_sum_xm += d_current_sum_xm;
 		d_current_sum_xm = 0;
 	}
 
@@ -822,12 +813,11 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 
 	for (int i = 0; i < i_S; i++) {
 		for (int j = 0; j < i_M; j++) {
-			d_current_sum_xm += pdSolution[i_counter + i_M * j];
+			d_current_sum_xm += pdSolution[i_counter + i_S * j];
 		}
 
 
 		while (d_current_sum_xm > pd_ss[i]) {
-			//	i_counter -= -i_M;		// cofamy o iteracje F
 
 			for (int j = 0; j < i_M; j++) {
 				if (pdSolution[i_counter + i_M * j] * REDUCTION_PARAMETER > dGetMin(i_counter + i_M * j, b_is_success)) {
@@ -843,10 +833,7 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 		}
 
 		d_current_sum_xm = 0;
-		i_counter++;
 	}
-
-	//vPrintSolution(pdSolution);
 
 	for (int i = 0; i < i_M; i++) {
 		for (int j = 0; j < i_F; j++) {
@@ -909,7 +896,6 @@ void CMscnProblem::vRepairBadSolution(double * pdSolution) {
 		}
 
 		while (d_sum_from_d_to_f < d_sum_from_f_to_m) {
-			//		cout << d_sum_from_d_to_f << "   " << d_sum_from_f_to_m << endl;
 			for (int j = 0; j < i_D; j++) {
 				i_counter = INDEX_OF_FIRST_DATA_IN_SOLUTION + i + j * i_F;
 				if (pdSolution[i_counter] == 0) {
@@ -957,7 +943,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 	double d_total_sum_xm = 0;
 
 	for (int i = 0; i < i_D; i++) {
-		for (int j = 0; j < i_F; j++) {			// po co mi tutaj ten j?
+		for (int j = 0; j < i_F; j++) {			// mozna zredukowac ilosc zmiennych
 			if (pdSolution[i_counter] >= 0) {
 				d_current_sum_xd += pdSolution[i_counter];
 				i_counter++;

@@ -12,7 +12,7 @@ public:
 	~CTimer() {};
 
 	void vSetStartNow();
-	void vSetTimePassed(double  *pdTimePassedSec);
+	void vSetTimePassed(double  *pdTimePassed);
 
 private:
 	LARGE_INTEGER li_start;

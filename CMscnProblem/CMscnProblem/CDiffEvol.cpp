@@ -3,7 +3,7 @@
 
 CDiffEvol::CDiffEvol(CProblem *pcProblem, int iSeed) {
 	pc_problem = pcProblem;
-	i_iterations_counter = 0;
+	//i_iterations_counter = 0;
 	c_rand_gen = CRandom(iSeed);
 }
 
@@ -136,7 +136,7 @@ void CDiffEvol::v_crossover(CIndividual* pcNewInd, CIndividual** ppcIndBase, CIn
 void CDiffEvol::v_set_new_quality(CIndividual* pcNewInd, int iParentId) {
 	bool b_is_success;
 	(*pcNewInd).vSetFitness(pc_problem->dGetQuality((*pcNewInd).pdGetGenotype(), b_is_success));
-	i_iterations_counter++;
+	//i_iterations_counter++;
 }
 
 void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iParentId) {
@@ -185,7 +185,7 @@ void CDiffEvol::vRunIteration() {
 
 		}
 		else {
-			i_iterations_counter++;
+		//	i_iterations_counter++;
 		}
 	}
 }

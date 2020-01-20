@@ -4,8 +4,8 @@
 #include "CRandom.h"
 #include "CProblem.h"
 
-#define REDUCTION_PARAMETER 0.9
-#define INCREASE_PARAMETER 1.1
+#define REDUCTION_PARAMETER 0.85
+#define INCREASE_PARAMETER 1.05
 
 #define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
 #define DESC_IN_FILE_SIZE 16
@@ -68,6 +68,12 @@ private:
 	double** ppd_xfminmax;
 	double** ppd_xmminmax;
 
+	double dCalculateTransportCost(double * pdSolution, bool & bIsSuccess);
+	double dCalculateContractCost(double * pdSolution);
+	double dCalculateIncome(double * pdSolution);
+	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
+	void vRepairIncorrectSolution(double * pdSolution);
+
 public:
 	CMscnProblem();
 	~CMscnProblem();
@@ -104,14 +110,8 @@ public:
 	double dGetMin(int iId, bool &bIsSuccess);
 	double dGetMax(int iId, bool &bIsSuccess);
 
-	double dCalculateTransportCost(double * pdSolution, bool & bIsSuccess);
-	double dCalculateContractCost(double * pdSolution);
-	double dCalculateIncome(double * pdSolution);
-	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
 	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
-	void vRepairBadSolution(double * pdSolution);
-	
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
 
 	double iGetSolutionArrayLen();

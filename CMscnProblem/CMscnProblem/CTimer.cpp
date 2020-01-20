@@ -9,7 +9,7 @@ void CTimer::vSetStartNow(){
 }
 
 
-void CTimer::vSetTimePassed(double *pdTimePassedSec){
+void CTimer::vSetTimePassed(double *pdTimePassed){
 	LARGE_INTEGER li_now;
 	QueryPerformanceCounter(&li_now);
 
@@ -18,7 +18,7 @@ void CTimer::vSetTimePassed(double *pdTimePassedSec){
 	d_result = (li_now.QuadPart - li_start.QuadPart);
 	d_result = d_result / li_freq.QuadPart;
 
-	*pdTimePassedSec = d_result;
+	*pdTimePassed = d_result;
 }
 
 
