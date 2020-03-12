@@ -100,11 +100,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -152,8 +152,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CArray.h" />
     <ClInclude Include="CDiffEvol.h" />
     <ClInclude Include="CIndividual.h" />
+    <ClInclude Include="CMatrix.h" />
     <ClInclude Include="CMscnProblem.h" />
     <ClInclude Include="COptimizer.h" />
     <ClInclude Include="CProblem.h" />
@@ -163,11 +165,11 @@
     <ClInclude Include="CTimer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CArray.cpp" />
     <ClCompile Include="CDiffEvol.cpp" />
     <ClCompile Include="CIndividual.cpp" />
+    <ClCompile Include="CMatrix.cpp" />
     <ClCompile Include="CMscnProblem.cpp" />
-    <ClCompile Include="COptimizer.cpp" />
-    <ClCompile Include="CProblem.cpp" />
     <ClCompile Include="CRandom.cpp" />
     <ClCompile Include="CRandomSearch.cpp" />
     <ClCompile Include="CTimer.cpp" />

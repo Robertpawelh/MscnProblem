@@ -7,7 +7,6 @@
 
 class CTimer {
 public:
-
 	CTimer();
 	~CTimer() {};
 

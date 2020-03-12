@@ -1,11 +1,11 @@
 #pragma once
-#include "CProblem.h"
+#include "CMscnProblem.h"
 #include "CRandomSolutionGenerator.h"
 
 class COptimizer {
 private:
 protected:
-	CProblem * pc_problem;
+	CMscnProblem * pc_problem;
 	double * pd_current_best;
 public:
 	

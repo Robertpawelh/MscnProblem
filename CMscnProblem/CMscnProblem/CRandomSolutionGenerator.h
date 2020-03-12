@@ -1,8 +1,9 @@
 #pragma once
 #include "CRandom.h"
-#include "CProblem.h"
+#include "CMscnProblem.h"
+#include <algorithm>
 class CRandomSolutionGenerator{
 public:
-	static double * pd_random_solution(CRandom &cGenerator, CProblem* pcProblem, double dValuesDivider);
+	static double * pd_random_solution(CRandom &cGenerator, CMscnProblem* pcProblem);
 };
 

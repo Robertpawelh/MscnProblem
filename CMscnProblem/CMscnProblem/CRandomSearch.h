@@ -1,5 +1,5 @@
 #pragma once
-#include "CProblem.h"
+#include "CMscnProblem.h"
 #include "CRandom.h"
 #include "COptimizer.h"
 
@@ -12,7 +12,7 @@ private:
 	CRandom c_generator;
 	double d_best_quality;
 public:
-	CRandomSearch(CProblem * pcProblem, int iSeed);
+	CRandomSearch(CMscnProblem * pcProblem, int iSeed);
 
 	~CRandomSearch() {
 	}

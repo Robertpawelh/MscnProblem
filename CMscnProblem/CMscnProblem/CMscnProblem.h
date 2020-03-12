@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include "CRandom.h"
 #include "CProblem.h"
+#include "CMatrix.h"
+#include "CArray.h"
 
 #define REDUCTION_PARAMETER 0.85
 #define INCREASE_PARAMETER 1.05
 
-#define INDEX_OF_FIRST_DATA_IN_SOLUTION 4
+#define NUMBER_OF_PRODUCTION_LEVELS 4
 #define DESC_IN_FILE_SIZE 16
 #define NULL_ERROR "pdSolution is NULL"
 #define LENGTH_ERROR "length of solution is incorrect"
@@ -46,43 +48,42 @@ using namespace std;
 
 class CMscnProblem : public CProblem {
 private:
-	int i_D;
-	int i_F;
-	int i_M;
-	int i_S;
-	double* pd_sd;
-	double* pd_sf;
-	double* pd_sm;
-	double* pd_ss;
+	int i_num_of_suppliers;
+	int i_num_of_factories;
+	int i_num_of_warehouses;
+	int i_num_of_shops;
 
-	double** ppd_cd;
-	double** ppd_cf;
-	double** ppd_cm;
+	CArray *pc_max_cap_of_supp;
+	CArray *pc_max_cap_of_fact;
+	CArray *pc_max_cap_of_ware;
+	CArray *pc_max_cap_of_shop;
 
-	double* pd_ud;
-	double* pd_uf;
-	double* pd_um;
-	double* pd_p;
+	CMatrix c_transp_cost_supp_to_fact;
+	CMatrix c_transp_cost_fact_to_ware;
+	CMatrix c_transp_cost_ware_to_shop;
 
-	double** ppd_xdminmax;
-	double** ppd_xfminmax;
-	double** ppd_xmminmax;
+	CArray *pc_contract_cost_supp;
+	CArray *pc_contract_cost_fact;
+	CArray *pc_contract_cost_ware;
+	CArray *pc_income;
 
-	double dCalculateTransportCost(double * pdSolution, bool & bIsSuccess);
-	double dCalculateContractCost(double * pdSolution);
-	double dCalculateIncome(double * pdSolution);
-	double dCalculateProfit(double * pdSolution, bool & bIsSuccess);
-	void vRepairIncorrectSolution(double * pdSolution);
+	double d_calc_transp_cost_for_matrix(int & iId, double * pdSolution, CMatrix *pcCostMatrix, int iX, int iY);
+	double d_calc_transp_cost(double * pdSolution);
+	double d_calc_contract_cost_for_array(int & iId, double * pdSolution, CArray *pcCostArray, int iX, int iY);
+	double d_calc_contract_cost(double * pdSolution);
+	double d_calc_income(double * pdSolution);
+	double d_calc_profit(double * pdSolution);
+//	void vRepairIncorrectSolution(double * pdSolution);
 
 public:
 	CMscnProblem();
 	~CMscnProblem();
 
-	bool bSetD(const int iVal);
-	bool bSetF(const int iVal);
-	bool bSetM(const int iVal);
-	bool bSetS(const int iVal);
-
+	//bool bSetNumOfSuppliers(const int iVal);
+	//bool bSetNumOfFactories(const int iVal);
+	//bool bSetNumOfWarehouses(const int iVal);
+	//bool bSetNumOfShops(const int iVal);
+	/*
 	bool bSetValInCd(int iRow, int iColumn, double dVal);
 	bool bSetValInCf(int iRow, int iColumn, double dVal);
 	bool bSetValInCm(int iRow, int iColumn, double dVal);
@@ -101,26 +102,31 @@ public:
 	bool bSetValInXdminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
 	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
+	*/
+	int iGetNumOfSuppliers() { return i_num_of_suppliers; };
+	int iGetNumOfFactories() { return i_num_of_factories; };
+	int iGetNumOfWarehouses() { return i_num_of_warehouses; };
+	int iGetNumOfShops() { return i_num_of_shops; };
 
-	int iGetD() { return i_D; };
-	int iGetF() { return i_F; };
-	int iGetM() { return i_M; };
-	int iGetS() { return i_S; };
-
-	double dGetMin(int iId, bool &bIsSuccess);
+	//double dGetMin(int iId, bool &bIsSuccess);
 	double dGetMax(int iId, bool &bIsSuccess);
 
 	double dGetQuality(double *pdSolution, bool &bIsSuccess);
 
 	bool bConstraintsSatisfied(double *pdSolution, string & sErrorCode);
 
-	double iGetSolutionArrayLen();
+	double iGetSolutionLen() {
+		return NUMBER_OF_PRODUCTION_LEVELS + 
+			i_num_of_suppliers * i_num_of_factories + 
+			i_num_of_factories * i_num_of_warehouses + 
+			i_num_of_warehouses * i_num_of_shops;
+	};
 
 	bool bSaveProblemInstance(string sFileName);
 	bool bSaveSolution(string sFileName, double *pdSolution);
 
 	double* pdReadSolution(string sFileName);
-	bool bReadProblemInstance(string sFileName);
+	//bool bReadProblemInstance(string sFileName);
 
 	void vPrintInstance();
 	void vPrintSolution(double * pdSolution);

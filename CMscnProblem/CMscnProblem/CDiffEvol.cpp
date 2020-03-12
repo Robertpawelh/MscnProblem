@@ -1,9 +1,8 @@
 ﻿#include "CDiffEvol.h"
 
 
-CDiffEvol::CDiffEvol(CProblem *pcProblem, int iSeed) {
+CDiffEvol::CDiffEvol(CMscnProblem *pcProblem, int iSeed) {
 	pc_problem = pcProblem;
-	//i_iterations_counter = 0;
 	c_rand_gen = CRandom(iSeed);
 }
 
@@ -16,7 +15,7 @@ void CDiffEvol::vInitialize() {
 	bool b_is_success;
 	string s_error_code;
 
-	i_genotype_size = pc_problem->iGetSolutionArrayLen();
+	i_genotype_size = pc_problem->iGetSolutionLen();
 	d_best_quality = INT_MIN;
 	if (pc_current_population != NULL) {
 		delete[]pc_current_population;
@@ -25,7 +24,7 @@ void CDiffEvol::vInitialize() {
 	i_current_pop_size = POPULATION_SIZE;
 
 	for (int i = 0; i < POPULATION_SIZE; i++) {
-		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem, STARTING_VALUES_DIVIDER)); //zmien na c_rand_gen
+		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem)); //zmien na c_rand_gen
 		pc_current_population[i].vSetGenotypeSize(i_genotype_size);
 		pc_current_population[i].vSetFitness((*pc_problem).dGetQuality(pc_current_population[i].pdGetGenotype(), b_is_success));
 	};
@@ -127,8 +126,8 @@ void CDiffEvol::v_crossover(CIndividual* pcNewInd, CIndividual** ppcIndBase, CIn
 		((**ppcInd1).dGetGeneAtIndex(iGeneOffset) - (**ppcInd2).dGetGeneAtIndex(iGeneOffset));
 
 	bool b_is_success;
-	double d_min_val = pc_problem->dGetMin(iGeneOffset, b_is_success);
-	double d_max_val = pc_problem->dGetMax(iGeneOffset, b_is_success);
+//	double d_min_val = pc_problem->dGetMin(iGeneOffset, b_is_success);
+//	double d_max_val = pc_problem->dGetMax(iGeneOffset, b_is_success);
 
 	(*pcNewInd).vSetGeneAtIndex(iGeneOffset, dNewGene);
 }
@@ -206,7 +205,7 @@ void CDiffEvol::v_change_population_size(int iNewSize) {
 			pc_new_population[i] = pc_current_population[i];
 		}
 		for (int i = i_current_pop_size; i < iNewSize; i++) {
-			pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem, STARTING_VALUES_DIVIDER));
+			pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem));
 		}
 
 	}

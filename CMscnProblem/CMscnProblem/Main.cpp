@@ -7,11 +7,31 @@ int main() {
 	bool b_is_success;
 	string s_error_code;
 	double * pd_best_found_solution = nullptr;
-
 	CMscnProblem *pc_mscn_problem_object = new CMscnProblem();
+	pc_mscn_problem_object->vGenerateInstance(1);
+	CRandomSearch * pc_rand_search = new CRandomSearch(pc_mscn_problem_object, 2);
+	
+	COptimizer *pc_optimizer;
+	CTimer c_timer;
 
+	cout << "\nRandomSearch:\n";
+	double d_time_passed = 0;
+	c_timer.vSetStartNow();
+	pc_optimizer = pc_rand_search;
+	pc_optimizer->vInitialize();
+	pc_mscn_problem_object->vPrintInstance();
+
+	while (d_time_passed <= MAX_TIME) {
+		pc_optimizer->vRunIteration();
+		pd_best_found_solution = pc_optimizer->pdGetCurrentBest();
+		c_timer.vSetTimePassed(&d_time_passed);
+	}
+	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
+
+/*
+	CMscnProblem *pc_mscn_problem_object = new CMscnProblem();
 	cout << "WSPOLNY TEST:" << endl;
-	pc_mscn_problem_object->bReadProblemInstance("wspolny_test.txt");
+	//pc_mscn_problem_object->bReadProblemInstance("wspolny_test.txt");
 	double* pd_solution = pc_mscn_problem_object->pdReadSolution("wspolne_solution.txt");
 	cout << "Wspolne rozwiazanie " << endl;
 	cout << "PROFIT: " << pc_mscn_problem_object->dGetQuality(pd_solution, b_is_success) << endl;
@@ -34,7 +54,7 @@ int main() {
 		pd_best_found_solution = pc_optimizer->pdGetCurrentBest();
 		c_timer.vSetTimePassed(&d_time_passed);
 	}
-	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
+//	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
 
 	cout << "\nDiffEvolution:\n";
 	d_time_passed = 0;
@@ -47,17 +67,17 @@ int main() {
 		pd_best_found_solution = pc_optimizer->pdGetCurrentBest();
 		c_timer.vSetTimePassed(&d_time_passed);
 	}
-	pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
+	//pc_mscn_problem_object->vPrintSolution(pd_best_found_solution);
 	
 
 	cout << "\n\nInny test" << endl;
-
-	pc_mscn_problem_object->bSetD(15);
-	pc_mscn_problem_object->bSetF(15);
-	pc_mscn_problem_object->bSetM(15);
-	pc_mscn_problem_object->bSetS(15);
+	/*
+	pc_mscn_problem_object->bSetNumOfSuppliers(15);
+	pc_mscn_problem_object->bSetNumOfFactories(15);
+	pc_mscn_problem_object->bSetNumOfWarehouses(15);
+	pc_mscn_problem_object->bSetNumOfShops(15);
 	pc_mscn_problem_object->vGenerateInstance(15);
-
+	
 	cout << "\nRandomSearch:\n";
 	d_time_passed = 0;
 	c_timer.vSetStartNow();
@@ -85,15 +105,5 @@ int main() {
 
 	delete pc_mscn_problem_object;
 	delete pc_rand_search;
-	delete pc_diff_evol;
+	delete pc_diff_evol;*/
 }
-
-/*
-Zastanow sie, czy klasa metody powinna brac wskaznik na
-obiekt konkretnego problemu (np. CMscnProblem), czy raczej na klase wirtualna
-CProblem
-
-Powinna ona brac wskaznik na klase wirtualna, gdyz zastosowane algorytmy sa niezalezne od problemu, tzn. dobrze zaimplementowane
-powinny dzialac dla kazdego problemu kodowanego przez ciag liczb rzeczywistych. Posiadanie wskaznika na klase wirtualna zwiekszy
-wiec uniwersalnosc naszej klasy optimizer
-*/
