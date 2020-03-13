@@ -28,7 +28,6 @@ void CRandomSearch::vRunIteration() {
 			cout << d_best_quality << endl;
 			pd_current_best = pd_current_solution;
 		}
-		//pc_problem->vPrintSolution(pd_current_best);
 	else {
 		delete[] pd_current_solution;
 	}

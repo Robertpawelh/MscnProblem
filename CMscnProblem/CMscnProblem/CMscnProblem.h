@@ -6,10 +6,10 @@
 #include "CMatrix.h"
 #include "CArray.h"
 
-#define BASIC_NUM_OFF_SUPPLIERS 3
-#define BASIC_NUM_OFF_FACTORIES 4
-#define BASIC_NUM_OFF_WAREHOUSES 3
-#define BASIC_NUM_OFF_SHOPS 4
+#define BASIC_NUM_OFF_SUPPLIERS 1
+#define BASIC_NUM_OFF_FACTORIES 6
+#define BASIC_NUM_OFF_WAREHOUSES 1
+#define BASIC_NUM_OFF_SHOPS 11
 
 #define REDUCTION_PARAMETER 0.85
 #define INCREASE_PARAMETER 1.05
@@ -63,9 +63,9 @@ private:
 	CArray *pc_max_cap_of_ware;
 	CArray *pc_max_cap_of_shop;
 
-	CMatrix c_transp_cost_supp_to_fact;
-	CMatrix c_transp_cost_fact_to_ware;
-	CMatrix c_transp_cost_ware_to_shop;
+	CMatrix *pc_transp_cost_supp_to_fact;
+	CMatrix *pc_transp_cost_fact_to_ware;
+	CMatrix *pc_transp_cost_ware_to_shop;
 
 	CArray *pc_contract_cost_supp;
 	CArray *pc_contract_cost_fact;

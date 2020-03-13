@@ -30,6 +30,7 @@ int main() {
 	}
 	cout << pc_mscn_problem_object->bConstraintsSatisfied(pd_best_found_solution, xd);
 
+	delete pc_mscn_problem_object;
 
 /*
 	CMscnProblem *pc_mscn_problem_object = new CMscnProblem();

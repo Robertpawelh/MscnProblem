@@ -13,9 +13,9 @@ CMatrix::CMatrix(const int iX, const int iY){
 
 CMatrix::~CMatrix(){
 	for (int i = 0; i < i_x; i++) {
-	//	delete[] ppd_matrix[i];
+		delete[] ppd_matrix[i];
 	}
-	//delete[] ppd_matrix;
+	delete[] ppd_matrix;
 }
 
 bool CMatrix::bSetValInMatrix(int iRow, int iColumn, double dVal) {
@@ -44,5 +44,4 @@ void CMatrix::vFillRandomly(CRandom *pcRandom, int iMin, int iMax) {
 			ppd_matrix[i][j] = pcRandom->d_random(iMin, iMax);
 		}
 	}
-
 }
