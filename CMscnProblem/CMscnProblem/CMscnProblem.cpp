@@ -1,10 +1,10 @@
 ﻿#include "CMscnProblem.h"
 
 CMscnProblem::CMscnProblem(){
-	i_num_of_suppliers = 1;
-	i_num_of_factories = 1;
-	i_num_of_warehouses = 1;
-	i_num_of_shops = 1;
+	i_num_of_suppliers = BASIC_NUM_OFF_SUPPLIERS;
+	i_num_of_factories = BASIC_NUM_OFF_FACTORIES;
+	i_num_of_warehouses = BASIC_NUM_OFF_WAREHOUSES;
+	i_num_of_shops = BASIC_NUM_OFF_SHOPS;
 
 	pc_max_cap_of_supp = new CArray(i_num_of_suppliers);
 	pc_max_cap_of_fact = new CArray(i_num_of_factories);
@@ -857,17 +857,17 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 		return false;
 	}
 
-	double d_current_sum_xd = 0;
-	double d_current_sum_xf = 0;
-	double d_current_sum_xm = 0;
+	double d_sum_supplier_sends = 0;
+	double d_sum_factory_sends = 0;
+	double d_sum_warehouse_sends = 0;
 	double d_total_sum_xd = 0;
 	double d_total_sum_xf = 0;
 	double d_total_sum_xm = 0;
 
 	for (int i = 0; i < i_num_of_suppliers; i++) {
-		for (int j = 0; j < i_num_of_factories; j++) {			// mozna zredukowac ilosc zmiennych
+		for (int j = 0; j < i_num_of_factories; j++) {	
 			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xd += pdSolution[i_counter];
+				d_sum_supplier_sends += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
@@ -876,18 +876,17 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 			}
 		}
 
-		if (d_current_sum_xd > (*pc_max_cap_of_supp)[i]) {
-			sErrorCode = BIGGER_THAN_PRODUCED_ERROR;
+		if (d_sum_supplier_sends > (*pc_max_cap_of_supp)[i]) {
+			//sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR,"supplier");
 			return false;
 		}
-		d_total_sum_xd += d_current_sum_xd;
-		d_current_sum_xd = 0;
+		d_sum_supplier_sends = 0;
 	}
 
 	for (int i = 0; i < i_num_of_factories; i++) {
 		for (int j = 0; j < i_num_of_warehouses; j++) {
 			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xf += pdSolution[i_counter];
+				d_sum_factory_sends += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
@@ -896,18 +895,18 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 			}
 		}
 
-		if (d_current_sum_xf > (*pc_max_cap_of_fact)[i]) {
-			sErrorCode = BIGGER_THAN_PRODUCED_ERROR;
+		if (d_sum_factory_sends > (*pc_max_cap_of_fact)[i]) {
+		//	sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR, "factory");
 			return false;
 		}
-		d_total_sum_xf += d_current_sum_xf;
-		d_current_sum_xf = 0;
+
+		d_sum_factory_sends = 0;
 	}
 
 	for (int i = 0; i < i_num_of_warehouses; i++) {
 		for (int j = 0; j < i_num_of_shops; j++) {
 			if (pdSolution[i_counter] >= 0) {
-				d_current_sum_xm += pdSolution[i_counter];
+				d_sum_warehouse_sends += pdSolution[i_counter];
 				i_counter++;
 			}
 			else {
@@ -916,28 +915,27 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 			}
 		}
 
-		if (d_current_sum_xm > (*pc_max_cap_of_ware)[i]) {
-			sErrorCode = BIGGER_THAN_PRODUCED_ERROR;
+		if (d_sum_warehouse_sends > (*pc_max_cap_of_ware)[i]) {
+			//sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR, "warehouse");
 			return false;
 		}
-		d_total_sum_xm += d_current_sum_xm;
-		d_current_sum_xm = 0;
+		d_sum_warehouse_sends = 0;
 	}
 
-	d_current_sum_xm = 0;
+	d_sum_warehouse_sends = 0;
 	i_counter = NUMBER_OF_PRODUCTION_LEVELS + i_num_of_suppliers * i_num_of_factories + i_num_of_factories * i_num_of_warehouses;
 
 	for (int i = 0; i < i_num_of_shops; i++) {
 		for (int j = 0; j < i_num_of_warehouses; j++) {
-			d_current_sum_xm += pdSolution[i_counter + i_num_of_warehouses * j];
+			d_sum_warehouse_sends += pdSolution[i_counter + i_num_of_warehouses * i + j];
 		}
 
-		if (d_current_sum_xm > (*pc_max_cap_of_shop)[i]) {
+		if (d_sum_warehouse_sends > (*pc_max_cap_of_shop)[i]) {
 			sErrorCode = BIGGER_THAN_PRODUCED_ERROR;
 			return false;
 		}
 
-		d_current_sum_xm = 0;
+		d_sum_warehouse_sends = 0;
 		i_counter++;
 	}
 
@@ -948,37 +946,6 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 
 
 	i_counter = NUMBER_OF_PRODUCTION_LEVELS;
-	/*
-	for (int i = 0; i < 2 * i_num_of_suppliers; i += 2) {
-		for (int j = 0; j < i_num_of_factories; j++) {
-			if (pdSolution[i_counter] < ppd_xdminmax[i][j] || pdSolution[i_counter] > ppd_xdminmax[i + 1][j]) {
-				sErrorCode = MIN_MAX_ERROR;
-				return false;
-			}
-			i_counter++;
-		}
-	}
-
-	for (int i = 0; i < 2 * i_num_of_factories; i += 2) {
-		for (int j = 0; j < i_num_of_warehouses; j++) {
-			if (pdSolution[i_counter] < ppd_xfminmax[i][j] || pdSolution[i_counter] > ppd_xfminmax[i + 1][j]) {
-				sErrorCode = MIN_MAX_ERROR;
-				return false;
-			}
-			i_counter++;
-		}
-	}
-
-	for (int i = 0; i < 2 * i_num_of_warehouses; i += 2) {
-		for (int j = 0; j < i_num_of_shops; j++) {
-			if (pdSolution[i_counter] < ppd_xmminmax[i][j] || pdSolution[i_counter] > ppd_xmminmax[i + 1][j]) {
-				sErrorCode = MIN_MAX_ERROR;
-				return false;
-			}
-			i_counter++;
-		}
-	}
-	*/
 	return true;
 }
 
@@ -1201,25 +1168,20 @@ double* CMscnProblem::pdReadSolution(string sFileName) {
 
 void CMscnProblem::vGenerateInstance(int iInstanceSeed) {
 	CRandom c_random_gen(iInstanceSeed);
-	(*pc_max_cap_of_supp).vFillRandomly(&c_random_gen, MIN_SD, MAX_SD);
-	cout << (*pc_max_cap_of_supp)[0] << endl;
-	(*pc_max_cap_of_fact).vFillRandomly(&c_random_gen, MIN_SF, MAX_SF);
-	cout << (*pc_max_cap_of_fact)[0] << endl;
-	(*pc_max_cap_of_ware).vFillRandomly(&c_random_gen, MIN_SM, MAX_SM);
-	cout << (*pc_max_cap_of_ware)[0] << endl;
-	(*pc_max_cap_of_shop).vFillRandomly(&c_random_gen, MIN_SS, MAX_SS);
-	cout << (*pc_max_cap_of_shop)[0] << endl;
-	vPrintInstance();
+	pc_max_cap_of_supp->vFillRandomly(&c_random_gen, MIN_SD, MAX_SD);
+	pc_max_cap_of_fact->vFillRandomly(&c_random_gen, MIN_SF, MAX_SF);
+	pc_max_cap_of_ware->vFillRandomly(&c_random_gen, MIN_SM, MAX_SM);
+	pc_max_cap_of_shop->vFillRandomly(&c_random_gen, MIN_SS, MAX_SS);
+
 	c_transp_cost_supp_to_fact.vFillRandomly(&c_random_gen, MIN_CD, MAX_CD);
 	c_transp_cost_fact_to_ware.vFillRandomly(&c_random_gen, MIN_CF, MAX_CF);
 	c_transp_cost_ware_to_shop.vFillRandomly(&c_random_gen, MIN_CM, MAX_CM);
 
-	(*pc_contract_cost_supp).vFillRandomly(&c_random_gen, MIN_UD, MAX_CD);
-	(*pc_contract_cost_fact).vFillRandomly(&c_random_gen, MIN_UF, MAX_CF);
-	(*pc_contract_cost_ware).vFillRandomly(&c_random_gen, MIN_UM, MAX_CM);
-	(*pc_income).vFillRandomly(&c_random_gen, MIN_P, MAX_P);
+	pc_contract_cost_supp->vFillRandomly(&c_random_gen, MIN_UD, MAX_CD);
+	pc_contract_cost_fact->vFillRandomly(&c_random_gen, MIN_UF, MAX_CF);
+	pc_contract_cost_ware->vFillRandomly(&c_random_gen, MIN_UM, MAX_CM);
+	pc_income->vFillRandomly(&c_random_gen, MIN_P, MAX_P);
 
-	//vPrintInstance();
 	/*
 	for (int i = 0; i < 2 * i_num_of_suppliers; i += 2) {
 		for (int j = 0; j < i_num_of_factories; j++) {

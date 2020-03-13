@@ -6,9 +6,9 @@ CArray::CArray(int iSize){
 	pd_array = new double [iSize];
 }
 
-
-//CArray::~CArray(){
-//}
+CArray::~CArray() {
+	delete[] pd_array;
+}
 
 bool CArray::bSetValInArray(int iIndex, double dVal) {
 	if (iIndex < 0 || iIndex >= i_size) {

@@ -6,6 +6,11 @@
 #include "CMatrix.h"
 #include "CArray.h"
 
+#define BASIC_NUM_OFF_SUPPLIERS 3
+#define BASIC_NUM_OFF_FACTORIES 4
+#define BASIC_NUM_OFF_WAREHOUSES 3
+#define BASIC_NUM_OFF_SHOPS 4
+
 #define REDUCTION_PARAMETER 0.85
 #define INCREASE_PARAMETER 1.05
 
@@ -98,10 +103,6 @@ public:
 	bool bSetValInUm(int iIndex, double dVal);
 
 	bool bSetValInP(int iIndex, double dVal);
-
-	bool bSetValInXdminmax(int iRow, int iColumn, double dVal);
-	bool bSetValInXfminmax(int iRow, int iColumn, double dVal);
-	bool bSetValInXmminmax(int iRow, int iColumn, double dVal);
 	*/
 	int iGetNumOfSuppliers() { return i_num_of_suppliers; };
 	int iGetNumOfFactories() { return i_num_of_factories; };

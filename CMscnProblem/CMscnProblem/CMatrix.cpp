@@ -13,7 +13,7 @@ CMatrix::CMatrix(const int iX, const int iY){
 
 CMatrix::~CMatrix(){
 	for (int i = 0; i < i_x; i++) {
-		//delete[] ppd_matrix[i];
+	//	delete[] ppd_matrix[i];
 	}
 	//delete[] ppd_matrix;
 }

@@ -18,8 +18,12 @@ double* CRandomSolutionGenerator::pd_random_solution(CRandom &cGenerator, CMscnP
 	}
 	*/	
 	bool b_is_success;
+	double * sumToS = new double[pcProblem->iGetNumOfSuppliers()];
 	double * sumToF = new double[pcProblem->iGetNumOfFactories()];
 	double * sumToM = new double[pcProblem->iGetNumOfWarehouses()];
+	for (int i = 0; i < pcProblem->iGetNumOfSuppliers(); i++) {
+		sumToS[i] = pcProblem->dGetMax(NUMBER_OF_PRODUCTION_LEVELS + i, b_is_success);
+	}
 	for (int i = 0; i < pcProblem->iGetNumOfFactories(); i++) {
 		sumToF[i] = 0;
 	}
@@ -28,31 +32,63 @@ double* CRandomSolutionGenerator::pd_random_solution(CRandom &cGenerator, CMscnP
 	}
 
 	int i_solution_data_len = pcProblem->iGetSolutionLen();
+
+	int max_len = pcProblem->iGetNumOfSuppliers() + pcProblem->iGetNumOfFactories() + pcProblem->iGetNumOfShops() + pcProblem->iGetNumOfWarehouses() + NUMBER_OF_PRODUCTION_LEVELS;
+	double * pd_max_cap = new double[max_len];
+	for (int i = 0; i < max_len; i++) {
+		pd_max_cap[i] = pcProblem->dGetMax(i, b_is_success);
+	}
 	double * pd_solution = new double[i_solution_data_len];
 	int i_counter = 0;
 
-	int first_loop_size = pcProblem->iGetNumOfSuppliers() * pcProblem->iGetNumOfFactories();
-	for (int i = 0; i < first_loop_size; i++) {
-		double d_max_val = pcProblem->dGetMax(i % pcProblem->iGetNumOfFactories(), b_is_success);
-		pd_solution[i] = cGenerator.d_random(0, d_max_val);
-		sumToF[i % (pcProblem->iGetNumOfSuppliers())] += pd_solution[i];
-	};
-	i_counter += first_loop_size;
-	int second_loop_size = pcProblem->iGetNumOfFactories() * pcProblem->iGetNumOfWarehouses();
-	for (int i = 0; i < second_loop_size; i++) {
-		double d_max_val = max( (pcProblem->dGetMax(i % pcProblem->iGetNumOfWarehouses(), b_is_success)), 
-							    (sumToF[i % pcProblem->iGetNumOfFactories()]));
+	pd_solution[i_counter++] = pcProblem->iGetNumOfSuppliers();
+	pd_solution[i_counter++] = pcProblem->iGetNumOfFactories();
+	pd_solution[i_counter++] = pcProblem->iGetNumOfWarehouses();
+	pd_solution[i_counter++] = pcProblem->iGetNumOfShops();
 
-		pd_solution[i_counter] = cGenerator.d_random(0, d_max_val);
-		sumToM[i_counter % pcProblem->iGetNumOfFactories()] += pd_solution[i];
+	for (int i = 0; i < pcProblem->iGetNumOfSuppliers(); i++) {
+		for (int j = 0; j < pcProblem->iGetNumOfFactories(); j++) {
+			double d_max_val = min(pd_max_cap[i_counter + i], sumToS[i]);
+			pd_solution[i * pcProblem->iGetNumOfFactories() + j + i_counter] = cGenerator.d_random(0, d_max_val);
+			sumToF[j] += pd_solution[i * pcProblem->iGetNumOfFactories() + j + i_counter];
+			sumToS[i] -= pd_solution[i * pcProblem->iGetNumOfFactories() + j + i_counter];
+			pd_max_cap[i_counter + i] -= pd_solution[i * pcProblem->iGetNumOfFactories() + j + i_counter];
+		}
+	};	
+	i_counter += pcProblem->iGetNumOfSuppliers() * pcProblem->iGetNumOfFactories();
+
+
+	for (int i = 0; i < pcProblem->iGetNumOfFactories(); i++) {
+		for (int j = 0; j < pcProblem->iGetNumOfWarehouses(); j++) {
+			double d_max_val = min(pd_max_cap[i + pcProblem->iGetNumOfSuppliers() + NUMBER_OF_PRODUCTION_LEVELS],
+				sumToF[i]);
+			pd_solution[i * pcProblem->iGetNumOfWarehouses() + j + i_counter] = cGenerator.d_random(0, d_max_val);
+
+			sumToM[j] += pd_solution[i * pcProblem->iGetNumOfWarehouses() + j + i_counter];
+			sumToF[i] -= pd_solution[i * pcProblem->iGetNumOfWarehouses() + j + i_counter];
+			pd_max_cap[i + pcProblem->iGetNumOfSuppliers() + NUMBER_OF_PRODUCTION_LEVELS] -= 
+				pd_solution[i * pcProblem->iGetNumOfWarehouses() + j + i_counter];
+		}
 	}
+	i_counter += pcProblem->iGetNumOfFactories() * pcProblem->iGetNumOfWarehouses();
 
-	i_counter += second_loop_size;
-	int third_loop_size = pcProblem->iGetNumOfWarehouses() * pcProblem->iGetNumOfShops();
-	for (int i = 0; i < third_loop_size; i++) {
-		double d_max_val = max( (pcProblem->dGetMax(i % pcProblem->iGetNumOfShops(), b_is_success)), 
-							    (sumToM[i % pcProblem->iGetNumOfWarehouses()]));
-		pd_solution[i_counter] = cGenerator.d_random(0, d_max_val);
+
+	for (int i = 0; i < pcProblem->iGetNumOfWarehouses(); i++) {
+		for (int j = 0; j < pcProblem->iGetNumOfShops(); j++) {
+			double d_max_val = min(pd_max_cap[i + pcProblem->iGetNumOfSuppliers() + pcProblem->iGetNumOfFactories()  + NUMBER_OF_PRODUCTION_LEVELS],
+				sumToM[i]);
+			d_max_val = min(d_max_val, pd_max_cap[j + pcProblem->iGetNumOfWarehouses() + pcProblem->iGetNumOfSuppliers() + pcProblem->iGetNumOfFactories() + NUMBER_OF_PRODUCTION_LEVELS]);
+			pd_solution[i * pcProblem->iGetNumOfShops() + j + i_counter] = cGenerator.d_random(0, d_max_val);
+
+			sumToM[i] -= pd_solution[i * pcProblem->iGetNumOfShops() + j + i_counter];
+
+			pd_max_cap[i + pcProblem->iGetNumOfSuppliers() + pcProblem->iGetNumOfFactories() + NUMBER_OF_PRODUCTION_LEVELS] -=
+				pd_solution[i * pcProblem->iGetNumOfShops() + j + i_counter];
+
+			pd_max_cap[j + pcProblem->iGetNumOfWarehouses() + pcProblem->iGetNumOfSuppliers() + pcProblem->iGetNumOfFactories() + NUMBER_OF_PRODUCTION_LEVELS] -=
+				pd_solution[i * pcProblem->iGetNumOfShops() + j + i_counter];
+
+		}
 	}
 
 	return pd_solution;

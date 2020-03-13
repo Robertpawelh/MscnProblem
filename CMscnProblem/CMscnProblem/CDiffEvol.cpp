@@ -1,11 +1,9 @@
 ﻿#include "CDiffEvol.h"
 
-
 CDiffEvol::CDiffEvol(CMscnProblem *pcProblem, int iSeed) {
 	pc_problem = pcProblem;
 	c_rand_gen = CRandom(iSeed);
 }
-
 
 CDiffEvol::~CDiffEvol() {
 	delete[] pc_current_population;
@@ -35,29 +33,6 @@ void CDiffEvol::vInitialize() {
 	pd_current_best = new double[i_genotype_size];
 
 }
-/*
-bool CDiffEvol::bCheckStopCondition() {
-	return i_iterations_counter < NUMBER_OF_ITERATIONS;
-}
-*/
-
-/*
-double * CDiffEvol::pdFindBestSolution(int iSeed) {
-	vInitialize(iSeed);
-	while (bCheckStopCondition()) {
-		for (int i = 0; i < ITERATIONS_BEFORE_POPULATION_SIZE_CHANGE; i++) {
-			vRunIteration();
-		}
-		v_change_population_size(POPULATION_SIZE / 2);
-
-		for (int i = 0; i < ITERATIONS_BEFORE_POPULATION_SIZE_CHANGE; i++) {
-			vRunIteration();
-		}
-		v_change_population_size(POPULATION_SIZE);
-	}
-	return pd_current_best;
-}
-*/
 
 bool CDiffEvol::bAreIndividualsDifferent(CIndividual* cInd1, CIndividual* cInd2, CIndividual* cInd3, CIndividual* cInd4) {
 	bool b_are_12_the_same = true;
@@ -125,34 +100,34 @@ void CDiffEvol::v_crossover(CIndividual* pcNewInd, CIndividual** ppcIndBase, CIn
 		DIFF_WEIGHT *
 		((**ppcInd1).dGetGeneAtIndex(iGeneOffset) - (**ppcInd2).dGetGeneAtIndex(iGeneOffset));
 
-	bool b_is_success;
-//	double d_min_val = pc_problem->dGetMin(iGeneOffset, b_is_success);
-//	double d_max_val = pc_problem->dGetMax(iGeneOffset, b_is_success);
-
-	(*pcNewInd).vSetGeneAtIndex(iGeneOffset, dNewGene);
+	if (dNewGene >= 0) {
+		(*pcNewInd).vSetGeneAtIndex(iGeneOffset, dNewGene);
+	}
+	else {
+		(*pcNewInd).vSetGeneAtIndex(iGeneOffset, 0);
+	}
 }
 
 void CDiffEvol::v_set_new_quality(CIndividual* pcNewInd, int iParentId) {
 	bool b_is_success;
 	(*pcNewInd).vSetFitness(pc_problem->dGetQuality((*pcNewInd).pdGetGenotype(), b_is_success));
-	//i_iterations_counter++;
 }
 
 void CDiffEvol::v_replace_ind_if_child_is_better(CIndividual* pcNewInd, int iParentId) {
 	string s_error_code;
 
 	if ((*pcNewInd).dGetFitness() >= pc_current_population[iParentId].dGetFitness()) {
-		pc_current_population[iParentId] = *pcNewInd;
+		if (pc_problem->bConstraintsSatisfied(pcNewInd->pdGetGenotype(), s_error_code)) {
+			pc_current_population[iParentId] = *pcNewInd;
 
-		if ((*pcNewInd).dGetFitness() > d_best_quality) {
-			for (int i = 0; i < i_genotype_size; i++) {
-				pd_current_best[i] = pc_current_population[iParentId].dGetGeneAtIndex(i);
+			if ((*pcNewInd).dGetFitness() > d_best_quality) {
+				for (int i = 0; i < i_genotype_size; i++) {
+					pd_current_best[i] = pc_current_population[iParentId].dGetGeneAtIndex(i);
+				}
+
+				d_best_quality = (*pcNewInd).dGetFitness();
+				cout << d_best_quality << endl; // prints quality of best found solution
 			}
-
-			d_best_quality = (*pcNewInd).dGetFitness();
-			cout << d_best_quality << endl; // wyswietla kolejno znalezione najlepsze rozwiazania.
-		}
-		else {
 		}
 	}
 	else {
@@ -182,9 +157,6 @@ void CDiffEvol::vRunIteration() {
 			v_set_new_quality(c_element_new, i);
 			v_replace_ind_if_child_is_better(c_element_new, i);
 
-		}
-		else {
-		//	i_iterations_counter++;
 		}
 	}
 }

@@ -8,23 +8,27 @@ CRandomSearch::CRandomSearch(CMscnProblem * pcProblem, int iSeed) {
 void CRandomSearch::vInitialize() {
 	bool b_is_success;
 	string s_error_code;
+	pc_problem->vPrintInstance();
 	pd_current_best = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem);
+	pc_problem->vPrintSolution(pd_current_best);
 	d_best_quality = pc_problem->dGetQuality(pd_current_best, b_is_success);
 }
 
 void CRandomSearch::vRunIteration() {
 	bool b_is_success;
+	string error_code;
 	double d_current_quality;
 	double* pd_current_solution = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem);
 
 	pd_current_solution = CRandomSolutionGenerator::pd_random_solution(c_generator, pc_problem);
 	d_current_quality = pc_problem->dGetQuality(pd_current_solution, b_is_success);
-	if (d_best_quality < d_current_quality) {
-		d_best_quality = d_current_quality;
-		delete[] pd_current_best;
-		cout << d_best_quality << endl;
-		pd_current_best = pd_current_solution;
-	}
+	if (d_best_quality < d_current_quality && pc_problem->bConstraintsSatisfied(pd_current_solution, error_code)) {
+			d_best_quality = d_current_quality;
+			delete[] pd_current_best;
+			cout << d_best_quality << endl;
+			pd_current_best = pd_current_solution;
+		}
+		//pc_problem->vPrintSolution(pd_current_best);
 	else {
 		delete[] pd_current_solution;
 	}
