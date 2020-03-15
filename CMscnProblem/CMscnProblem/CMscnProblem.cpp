@@ -39,446 +39,6 @@ CMscnProblem::~CMscnProblem() {
 
 	delete pc_income;
 }
-/*
-bool CMscnProblem::bSetNumOfSuppliers(const int iVal) {
-	if (iVal < 0 || iVal == i_num_of_suppliers) {
-		return false;
-	}
-
-	//double* pd_new_sd = new double[iVal];
-	//double* pd_new_ud = new double[iVal];
-	//double** ppd_new_cd = new double*[iVal];
-
-	int i_loop_len = (iVal < i_num_of_suppliers) ? iVal : i_num_of_suppliers;
-	for (int i = 0; i < i_loop_len; i++) {
-		pd_new_sd[i] = c_max_cap_of_supp[i];
-		pd_new_ud[i] = c_contract_cost_supp[i];
-		ppd_new_cd[i] = c_transp_cost_supp_to_fact[i];
-		ppd_new_xdminmax[i] = ppd_xdminmax[i];
-	}
-
-	for (int i = i_loop_len; i < 2 * i_loop_len; i++) {
-		ppd_new_xdminmax[i] = ppd_xdminmax[i];
-	}
-
-	if (i_num_of_suppliers < iVal) {
-		for (int i = i_num_of_suppliers; i < iVal; i++) {
-			ppd_new_cd[i] = new double[i_num_of_factories];
-		}
-		for (int i = 2 * i_num_of_suppliers; i < 2 * iVal; i++) {
-			ppd_new_xdminmax[i] = new double[i_num_of_factories];
-		}
-	}
-
-	for (int i = iVal; i < i_num_of_suppliers; i++) {
-		delete[] c_transp_cost_supp_to_fact[i];
-	}
-
-	delete[] c_max_cap_of_supp;
-	delete[] c_contract_cost_supp;
-	delete[] c_transp_cost_supp_to_fact;
-	c_max_cap_of_supp = pd_new_sd;
-	c_contract_cost_supp = pd_new_ud;
-	c_transp_cost_supp_to_fact = ppd_new_cd;
-
-	for (int i = 2 * iVal; i < 2 * i_num_of_suppliers; i++) {
-		delete[] ppd_xdminmax[i];
-	}
-	delete[] ppd_xdminmax;
-	ppd_xdminmax = ppd_new_xdminmax;
-
-	i_num_of_suppliers = iVal;
-	return true;
-}
-
-bool CMscnProblem::bSetNumOfFactories(const int iVal) {
-	if (iVal < 0 || iVal == i_num_of_factories) {
-		return false;
-	}
-
-	double* pd_new_sf = new double[iVal];
-	double* pd_new_uf = new double[iVal];
-	double** ppd_new_cf = new double*[iVal];
-	double** ppd_new_cd = new double*[i_num_of_suppliers];
-	double** ppd_new_xdminmax = new double*[2 * i_num_of_suppliers];
-	double** ppd_new_xfminmax = new double*[2 * iVal];
-
-	for (int i = 0; i < i_num_of_suppliers; i++) {
-		ppd_new_cd[i] = new double[iVal];
-	}
-	for (int i = 0; i < 2 * i_num_of_suppliers; i++) {
-		ppd_new_xdminmax[i] = new double[iVal];
-	}
-
-	int i_loop_len = (iVal < i_num_of_factories) ? iVal : i_num_of_factories;
-
-	for (int i = 0; i < i_num_of_suppliers; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_cd[i][j] = c_transp_cost_supp_to_fact[i][j];
-			ppd_new_xdminmax[i][j] = ppd_xdminmax[i][j];
-		}
-	}
-
-	for (int i = i_num_of_suppliers; i < 2 * i_num_of_suppliers; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_xdminmax[i][j] = ppd_xdminmax[i][j];
-		}
-	}
-
-	for (int i = 0; i < i_loop_len; i++) {
-		pd_new_sf[i] = c_max_cap_of_fact[i];
-		pd_new_uf[i] = c_contract_cost_fact[i];
-		ppd_new_cf[i] = c_transp_cost_fact_to_ware[i];
-		ppd_new_xfminmax[i] = ppd_xfminmax[i];
-	}
-
-	for (int i = i_loop_len; i < 2 * i_loop_len; i++) {
-		ppd_new_xfminmax[i] = ppd_xfminmax[i];
-	}
-
-	if (i_num_of_factories < iVal) {
-
-		for (int i = i_num_of_factories; i < iVal; i++) {
-			ppd_new_cf[i] = new double[i_num_of_warehouses];
-		}
-		for (int i = 2 * i_num_of_factories; i < 2 * iVal; i++) {
-			ppd_new_xfminmax[i] = new double[i_num_of_warehouses];
-		}
-	}
-
-	for (int i = 0; i < i_num_of_suppliers; i++) {
-		delete[] c_transp_cost_supp_to_fact[i];
-	}
-
-	for (int i = iVal; i < i_num_of_factories; i++) {
-		delete[] c_transp_cost_fact_to_ware[i];
-	}
-
-	delete[] c_max_cap_of_fact;
-	delete[] c_contract_cost_fact;
-	delete[] c_transp_cost_fact_to_ware;
-	delete[] c_transp_cost_supp_to_fact;
-	c_max_cap_of_fact = pd_new_sf;
-	c_contract_cost_fact = pd_new_uf;
-	c_transp_cost_supp_to_fact = ppd_new_cd;
-	c_transp_cost_fact_to_ware = ppd_new_cf;
-
-	for (int i = 0; i < 2 * i_num_of_suppliers; i++) {
-		delete[] ppd_xdminmax[i];
-	}
-
-	for (int i = 2 * iVal; i < 2 * i_num_of_factories; i++) {
-		delete[] ppd_xfminmax[i];
-	}
-
-	delete[] ppd_xfminmax;
-	delete[] ppd_xdminmax;
-	ppd_xfminmax = ppd_new_xfminmax;
-	ppd_xdminmax = ppd_new_xdminmax;
-
-	i_num_of_factories = iVal;
-
-	return true;
-}
-
-bool CMscnProblem::bSetNumOfWarehouses(const int iVal) {
-	if (iVal < 0 || iVal == i_num_of_warehouses) {
-		return false;
-	}
-
-	double* pd_new_sm = new double[iVal];
-	double* pd_new_um = new double[iVal];
-	double** ppd_new_cm = new double*[iVal];
-	double** ppd_new_cf = new double*[i_num_of_factories];
-	double** ppd_new_xfminmax = new double*[2 * i_num_of_factories];
-	double** ppd_new_xmminmax = new double*[2 * iVal];
-
-	for (int i = 0; i < i_num_of_factories; i++) {
-		ppd_new_cf[i] = new double[iVal];
-	}
-	for (int i = 0; i < 2 * i_num_of_factories; i++) {
-		ppd_new_xfminmax[i] = new double[iVal];
-	}
-
-	int i_loop_len = (iVal < i_num_of_warehouses) ? iVal : i_num_of_warehouses;
-
-	for (int i = 0; i < i_num_of_factories; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_cf[i][j] = c_transp_cost_fact_to_ware[i][j];
-			ppd_new_xfminmax[i][j] = ppd_xfminmax[i][j];
-		}
-	}
-
-	for (int i = i_num_of_factories; i < 2 * i_num_of_factories; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_xfminmax[i][j] = ppd_xfminmax[i][j];
-		}
-	}
-
-
-	for (int i = 0; i < i_loop_len; i++) {
-		pd_new_sm[i] = c_max_cap_of_ware[i];
-		pd_new_um[i] = c_contract_cost_ware[i];
-		ppd_new_cm[i] = c_transp_cost_ware_to_shop[i];
-		ppd_new_xmminmax[i] = ppd_xmminmax[i];
-	}
-
-	for (int i = i_loop_len; i < 2 * i_loop_len; i++) {
-		ppd_new_xmminmax[i] = ppd_xmminmax[i];
-	}
-
-	if (i_num_of_warehouses < iVal) {
-
-		for (int i = i_num_of_warehouses; i < iVal; i++) {
-			ppd_new_cm[i] = new double[i_num_of_shops];
-		}
-		for (int i = 2 * i_num_of_warehouses; i < 2 * iVal; i++) {
-			ppd_new_xmminmax[i] = new double[i_num_of_shops];
-		}
-	}
-
-	for (int i = 0; i < i_num_of_factories; i++) {
-		delete c_transp_cost_fact_to_ware[i];
-	}
-
-	for (int i = iVal; i < i_num_of_warehouses; i++) {
-		delete[] c_transp_cost_ware_to_shop[i];
-	}
-
-	delete[] c_max_cap_of_ware;
-	delete[] c_contract_cost_ware;
-	delete[] c_transp_cost_ware_to_shop;
-	delete[] c_transp_cost_fact_to_ware;
-	c_max_cap_of_ware = pd_new_sm;
-	c_contract_cost_ware = pd_new_um;
-	c_transp_cost_fact_to_ware = ppd_new_cf;
-	c_transp_cost_ware_to_shop = ppd_new_cm;
-
-	for (int i = 0; i < 2 * i_num_of_factories; i++) {
-		delete[] ppd_xfminmax[i];
-	}
-
-	for (int i = 2 * iVal; i < 2 * i_num_of_warehouses; i++) {
-		delete[] ppd_xmminmax[i];
-	}
-
-	delete[] ppd_xmminmax;
-	delete[] ppd_xfminmax;
-	ppd_xmminmax = ppd_new_xmminmax;
-	ppd_xfminmax = ppd_new_xfminmax;
-
-	i_num_of_warehouses = iVal;
-
-	return true;
-}
-
-bool CMscnProblem::bSetNumOfShops(const int iVal) {
-	if (iVal < 0 || iVal == i_num_of_shops) {
-		return false;
-	}
-
-	double* pd_new_ss = new double[iVal];
-	double** ppd_new_cm = new double*[i_num_of_warehouses];
-	double** ppd_new_xmminmax = new double*[2 * i_num_of_warehouses];
-	double *pd_new_p = new double[iVal];
-
-	for (int i = 0; i < i_num_of_warehouses; i++) {
-		ppd_new_cm[i] = new double[iVal];
-	}
-	for (int i = 0; i < 2 * i_num_of_warehouses; i++) {
-		ppd_new_xmminmax[i] = new double[iVal];
-	}
-
-	int i_loop_len = (iVal < i_num_of_shops) ? iVal : i_num_of_shops;
-
-	for (int i = 0; i < i_num_of_warehouses; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_cm[i][j] = c_transp_cost_ware_to_shop[i][j];
-			ppd_new_xmminmax[i][j] = ppd_xmminmax[i][j];
-		}
-	}
-
-	for (int i = i_num_of_warehouses; i < 2 * i_num_of_warehouses; i++) {
-		for (int j = 0; j < i_loop_len; j++) {
-			ppd_new_xmminmax[i][j] = ppd_xmminmax[i][j];
-		}
-	}
-
-
-	for (int i = 0; i < i_loop_len; i++) {
-		pd_new_ss[i] = c_max_cap_of_shop[i];
-		pd_new_p[i] = c_income[i];
-	}
-
-	for (int i = 0; i < i_num_of_warehouses; i++) {
-		delete c_transp_cost_ware_to_shop[i];
-	}
-
-	delete[] c_max_cap_of_shop;
-	delete[] c_income;
-	delete[] c_transp_cost_ware_to_shop;
-	c_max_cap_of_shop = pd_new_ss;
-	c_income = pd_new_p;
-	c_transp_cost_ware_to_shop = ppd_new_cm;
-
-	for (int i = 0; i < 2 * i_num_of_warehouses; i++) {
-		delete[] ppd_xmminmax[i];
-	}
-
-	delete[] ppd_xmminmax;
-	ppd_xmminmax = ppd_new_xmminmax;
-
-	i_num_of_shops = iVal;
-
-	return true;
-}
-*/
-/*
-bool CMscnProblem::bSetValInCf(int iRow, int iColumn, double dVal) {
-	if (iRow < 0 || iRow >= i_num_of_factories || iColumn < 0 || iColumn >= i_num_of_warehouses) {
-		return false;
-	}
-	c_transp_cost_fact_to_ware[iRow][iColumn] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInCm(int iRow, int iColumn, double dVal) {
-	if (iRow < 0 || iRow >= i_num_of_warehouses || iColumn < 0 || iColumn >= i_num_of_shops) {
-		return false;
-	}
-	c_transp_cost_ware_to_shop[iRow][iColumn] = dVal;
-	return true;
-}
-
-
-bool CMscnProblem::bSetValInSd(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_suppliers) {
-		return false;
-	}
-	pd_max_cap_of_supp[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInSf(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_factories) {
-		return false;
-	}
-	pd_max_cap_of_fact[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInSm(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_warehouses) {
-		return false;
-	}
-	pd_max_cap_of_ware[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInSs(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_shops) {
-		return false;
-	}
-	pd_max_cap_of_shop[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInUd(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_suppliers) {
-		return false;
-	}
-	pd_contract_cost_sup[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInUf(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_factories) {
-		return false;
-	}
-	pd_contract_cost_fact[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInUm(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_warehouses) {
-		return false;
-	}
-	pd_contract_cost_ware[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInP(int iIndex, double dVal) {
-	if (iIndex < 0 || iIndex >= i_num_of_shops) {
-		return false;
-	}
-	pd_income[iIndex] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInXdminmax(int iRow, int iColumn, double dVal) {
-	if (iRow < 0 || iRow >= 2 * i_num_of_suppliers || iColumn < 0 || iColumn >= i_num_of_factories) {
-		return false;
-	}
-	ppd_xdminmax[iRow][iColumn] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInXfminmax(int iRow, int iColumn, double dVal) {
-	if (iRow < 0 || iRow >= 2 * i_num_of_factories || iColumn < 0 || iColumn >= i_num_of_warehouses) {
-		return false;
-	}
-	ppd_xfminmax[iRow][iColumn] = dVal;
-	return true;
-}
-
-bool CMscnProblem::bSetValInXmminmax(int iRow, int iColumn, double dVal) {
-	if (iRow < 0 || iRow >= 2 * i_num_of_warehouses || iColumn < 0 || iColumn >= i_num_of_shops) {
-		return false;
-	}
-	ppd_xmminmax[iRow][iColumn] = dVal;
-	return true;
-}
-
-double CMscnProblem::dGetMin(int iId, bool &bIsSuccess) {
-	if (iId >= INDEX_OF_FIRST_DATA_IN_SOLUTION) {
-		iId -= INDEX_OF_FIRST_DATA_IN_SOLUTION;
-	}
-
-	else {
-		bIsSuccess = true;
-		if (iId-- == 0) return i_num_of_suppliers;
-		if (iId-- == 0) return i_num_of_factories;
-		if (iId-- == 0) return i_num_of_warehouses;
-		if (iId-- == 0) return i_num_of_shops;
-	}
-
-	if (iId >= i_num_of_suppliers * i_num_of_factories) {
-		iId -= i_num_of_suppliers * i_num_of_factories;
-	}
-	else {
-		bIsSuccess = true;
-		return ppd_xdminmax[2 * (iId / i_num_of_factories)][iId%i_num_of_factories];
-	}
-
-	if (iId >= i_num_of_factories * i_num_of_warehouses) {
-		iId -= i_num_of_factories * i_num_of_warehouses;
-	}
-	else {
-		bIsSuccess = true;
-		return ppd_xfminmax[2 * (iId / i_num_of_warehouses)][iId%i_num_of_warehouses];
-	}
-
-	if (iId >= i_num_of_warehouses * i_num_of_shops) {
-		iId -= i_num_of_warehouses * i_num_of_shops;
-	}
-	else {
-		bIsSuccess = true;
-		return ppd_xmminmax[2 * (iId / i_num_of_shops)][iId%i_num_of_shops];
-	}
-	bIsSuccess = false;
-	return -1;
-}
-*/
 
 double CMscnProblem::dGetMax(int iId, bool &bIsSuccess) {
 	if (iId >= NUMBER_OF_PRODUCTION_LEVELS) {
@@ -528,7 +88,7 @@ double CMscnProblem::dGetMax(int iId, bool &bIsSuccess) {
 
 }
 
-double CMscnProblem::d_calc_transp_cost_for_matrix(int & iId, double * pdSolution, CMatrix *pdCostMatrix, int iX, int iY) { //upewnij sie czy nie kopiuje
+double CMscnProblem::d_calc_transp_cost_for_matrix(int iId, double * pdSolution, CMatrix *pdCostMatrix, int iX, int iY) { //upewnij sie czy nie kopiuje
 	double d_transport_cost = 0;
 	for (int i = 0; i < iX; i++) {
 		for (int j = 0; j < iY; j++) {
@@ -554,7 +114,7 @@ double CMscnProblem::d_calc_transp_cost(double* pdSolution) { //sprawdz czy dobr
 	return d_transport_cost;
 }
 
-double CMscnProblem::d_calc_contract_cost_for_array(int & iId, double * pdSolution, CArray *pcCostArray, int iX, int iY) {
+double CMscnProblem::d_calc_contract_cost_for_array(int iId, double * pdSolution, CArray *pcCostArray, int iX, int iY) {
 	double d_contract_cost = 0;
 	for (int i = 0; i < iX; i++) {
 		bool b_signed_contract = false;
@@ -600,7 +160,7 @@ double CMscnProblem::d_calc_profit(double* pdSolution) {
 
 double CMscnProblem::dGetQuality(double * pdSolution, bool &bIsSuccess) {
 	string s_error_code = "";
-	bIsSuccess = bConstraintsSatisfied (pdSolution, s_error_code);
+		bIsSuccess = bConstraintsSatisfied (pdSolution, s_error_code);
 	return d_calc_profit(pdSolution);
 }
 
@@ -641,7 +201,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 		}
 
 		if (d_sum_supplier_sends > (*pc_max_cap_of_supp)[i]) {
-			//sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR,"supplier");
+			sErrorCode = BIGGER_THAN_PRODUCED_ERROR;
 			return false;
 		}
 		d_sum_supplier_sends = 0;
@@ -660,7 +220,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 		}
 
 		if (d_sum_factory_sends > (*pc_max_cap_of_fact)[i]) {
-			//	sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR, "factory");
+			sErrorCode=BIGGER_THAN_PRODUCED_ERROR;
 			return false;
 		}
 
@@ -680,7 +240,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 		}
 
 		if (d_sum_warehouse_sends > (*pc_max_cap_of_ware)[i]) {
-			//sErrorCode.append(BIGGER_THAN_PRODUCED_ERROR, "warehouse");
+			sErrorCode=BIGGER_THAN_PRODUCED_ERROR;
 			return false;
 		}
 		d_sum_warehouse_sends = 0;
@@ -691,7 +251,7 @@ bool CMscnProblem::bConstraintsSatisfied(double * pdSolution, string & sErrorCod
 
 	for (int i = 0; i < i_num_of_shops; i++) {
 		for (int j = 0; j < i_num_of_warehouses; j++) {
-			d_sum_warehouse_sends += pdSolution[i_counter + i_num_of_warehouses * i + j]; // tu sie czasem psuje
+			d_sum_warehouse_sends += pdSolution[i_counter + i_num_of_warehouses * i + j]; //?
 		}
 
 		if (d_sum_warehouse_sends > (*pc_max_cap_of_shop)[i]) {
@@ -800,7 +360,7 @@ bool CMscnProblem::bSaveSolution(string sFileName, double* pdSolution) {
 	fprintf(pf_file, "%s", "\nxd");
 	for (int i = 0; i < i_num_of_suppliers; i++) {
 		for (int j = 0; j < i_num_of_factories; j++) {
-			fprintf(pf_file, "\n%lf ", pdSolution[i_counter++]);	//tu moge nieco poprawic te odstepy. w powyzszej funkcji chyba tez
+			fprintf(pf_file, "\n%lf ", pdSolution[i_counter++]);	// odstepy
 		}
 	}
 
@@ -820,69 +380,7 @@ bool CMscnProblem::bSaveSolution(string sFileName, double* pdSolution) {
 	fclose(pf_file);
 	return true;
 };
-/*
-bool CMscnProblem::bReadProblemInstance(string sFileName) {
-	FILE* pf_file = fopen(sFileName.c_str(), "r");
-	if (pf_file == NULL) {
-		return false;
-	}
 
-	char c_val[DESC_IN_FILE_SIZE];
-	int i_num;
-	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
-	bSetNumOfSuppliers(i_num);
-	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
-	bSetNumOfFactories(i_num);
-	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
-	bSetNumOfWarehouses(i_num);
-	fscanf(pf_file, "%[^0-9] %i", c_val, &i_num);
-	bSetNumOfShops(i_num);
-
-	c_max_cap_of_supp.bReadValFromFile(pf_file);
-	c_max_cap_of_fact.bReadValFromFile(pf_file);
-	c_max_cap_of_ware.bReadValFromFile(pf_file);
-	c_max_cap_of_shop.bReadValFromFile(pf_file);
-
-	c_transp_cost_supp_to_fact.bReadValFromFile(pf_file);
-	c_transp_cost_fact_to_ware.bReadValFromFile(pf_file);
-	c_transp_cost_ware_to_shop.bReadValFromFile(pf_file);
-
-	c_contract_cost_supp.bReadValFromFile(pf_file);
-	c_contract_cost_fact.bReadValFromFile(pf_file);
-	c_contract_cost_ware.bReadValFromFile(pf_file);
-	c_income.bReadValFromFile(pf_file);
-
-	/*
-	for (int i = 0; i < 2 * i_num_of_suppliers; i += 2) {
-		for (int j = 0; j < i_num_of_factories; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXdminmax(i, j, d_num);
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXdminmax(i + 1, j, d_num);
-		}
-	}
-
-	for (int i = 0; i < 2 * i_num_of_factories; i += 2) {
-		for (int j = 0; j < i_num_of_warehouses; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXfminmax(i, j, d_num);
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXfminmax(i + 1, j, d_num);
-		}
-	}
-
-	for (int i = 0; i < 2 * i_num_of_warehouses; i += 2) {
-		for (int j = 0; j < i_num_of_shops; j++) {
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXmminmax(i, j, d_num);
-			fscanf(pf_file, "%[^0-9] %lf", c_val, &d_num);
-			bSetValInXmminmax(i + 1, j, d_num);
-		}
-	}
-	fclose(pf_file);
-	return true;
-}
-*/
 double* CMscnProblem::pdReadSolution(string sFileName) {
 	FILE* pf_file = fopen(sFileName.c_str(), "r");
 	if (pf_file == NULL) {

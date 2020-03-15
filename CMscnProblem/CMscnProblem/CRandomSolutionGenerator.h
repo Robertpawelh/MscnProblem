@@ -4,6 +4,6 @@
 #include <algorithm>
 class CRandomSolutionGenerator{
 public:
-	static double * pd_random_solution(CRandom &cGenerator, CMscnProblem* pcProblem);
+	static double * pd_random_cmscn_solution(CRandom &cGenerator, CMscnProblem* pcProblem);
 };
 

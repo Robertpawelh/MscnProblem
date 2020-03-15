@@ -6,10 +6,10 @@
 #include "CMatrix.h"
 #include "CArray.h"
 
-#define BASIC_NUM_OFF_SUPPLIERS 1
-#define BASIC_NUM_OFF_FACTORIES 6
-#define BASIC_NUM_OFF_WAREHOUSES 1
-#define BASIC_NUM_OFF_SHOPS 11
+#define BASIC_NUM_OFF_SUPPLIERS 3
+#define BASIC_NUM_OFF_FACTORIES 5
+#define BASIC_NUM_OFF_WAREHOUSES 7
+#define BASIC_NUM_OFF_SHOPS 4
 
 #define REDUCTION_PARAMETER 0.85
 #define INCREASE_PARAMETER 1.05
@@ -72,9 +72,9 @@ private:
 	CArray *pc_contract_cost_ware;
 	CArray *pc_income;
 
-	double d_calc_transp_cost_for_matrix(int & iId, double * pdSolution, CMatrix *pcCostMatrix, int iX, int iY);
+	double d_calc_transp_cost_for_matrix(int iId, double * pdSolution, CMatrix *pcCostMatrix, int iX, int iY);
 	double d_calc_transp_cost(double * pdSolution);
-	double d_calc_contract_cost_for_array(int & iId, double * pdSolution, CArray *pcCostArray, int iX, int iY);
+	double d_calc_contract_cost_for_array(int iId, double * pdSolution, CArray *pcCostArray, int iX, int iY);
 	double d_calc_contract_cost(double * pdSolution);
 	double d_calc_income(double * pdSolution);
 	double d_calc_profit(double * pdSolution);
