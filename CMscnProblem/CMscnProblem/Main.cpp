@@ -17,8 +17,8 @@ int main() {
 
 	double d_time_passed = 0;
 	c_timer.vSetStartNow();
-	//pc_optimizer = pc_rand_search;
-	pc_optimizer = pc_diff_evol;//
+	pc_optimizer = pc_rand_search;
+	//pc_optimizer = pc_diff_evol;//
 	pc_optimizer->vInitialize();
 	//pc_mscn_problem_object->vPrintInstance();
 	string err_code = "";
