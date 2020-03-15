@@ -1,22 +1,7 @@
 #include "CRandomSolutionGenerator.h"
 
-double* CRandomSolutionGenerator::pd_random_solution(CRandom &cGenerator, CMscnProblem * pcProblem) {//CProblem* pcProblem) {
-	/*
+double* CRandomSolutionGenerator::pd_random_cmscn_solution(CRandom &cGenerator, CMscnProblem * pcProblem) {
 
-	bool b_is_success;
-	double * pd_maxvalues = new double [i_solution_data_len];
-	// co z pierwszymi 4?
-	for (int i = 0; i < i_solution_data_len; i++) {
-		pd_maxvalues[i] = pcProblem->dGetMax(i, b_is_success);
-	}
-
-	for (int i = 0; i < i_solution_data_len; i++) {
-		double d_min_val = 0;//pcProblem->dGetMin(i, b_is_success);
-		double d_max_val = pd_maxvalues[i];//10;//pcProblem->dGetMax(i, b_is_success);
-		updateMaxes();
-		pd_solution[i] = cGenerator.d_random(d_min_val, d_max_val);
-	}
-	*/	
 	bool b_is_success;
 	double * sumToS = new double[pcProblem->iGetNumOfSuppliers()];
 	double * sumToF = new double[pcProblem->iGetNumOfFactories()];

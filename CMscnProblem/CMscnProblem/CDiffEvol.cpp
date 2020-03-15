@@ -22,7 +22,7 @@ void CDiffEvol::vInitialize() {
 	i_current_pop_size = POPULATION_SIZE;
 
 	for (int i = 0; i < POPULATION_SIZE; i++) {
-		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem)); //zmien na c_rand_gen
+		pc_current_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_cmscn_solution(c_rand_gen, pc_problem)); //zmien na c_rand_gen
 		pc_current_population[i].vSetGenotypeSize(i_genotype_size);
 		pc_current_population[i].vSetFitness((*pc_problem).dGetQuality(pc_current_population[i].pdGetGenotype(), b_is_success));
 	};
@@ -177,7 +177,7 @@ void CDiffEvol::v_change_population_size(int iNewSize) {
 			pc_new_population[i] = pc_current_population[i];
 		}
 		for (int i = i_current_pop_size; i < iNewSize; i++) {
-			pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_solution(c_rand_gen, pc_problem));
+			pc_new_population[i].vSetGenotype(CRandomSolutionGenerator::pd_random_cmscn_solution(c_rand_gen, pc_problem));
 		}
 
 	}
